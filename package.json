@@ -1,12 +1,14 @@
 {
     "name": "bake",
     "displayName": "bake",
-    "description": "Support for bake based projects (http://esrlabs.github.io/bake/)",
-    "version": "0.0.1",
-    "publisher": "elektronenhirn",
+    "description": "Support for bake based projects (bake is a build tool, see http://esrlabs.github.io/bake/)",
+    "version": "0.1.0",
+    "publisher": "Florian Bramer",
     "engines": {
         "vscode": "^1.18.0"
     },
+    "license": "SEE LICENSE IN LICENSE.txt",
+    "icon": "logo_conformant_128.png",
     "categories": [
         "Other"
     ],
