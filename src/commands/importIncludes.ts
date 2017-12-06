@@ -53,7 +53,7 @@ function _importIncludes(bakeOutput, cppConfigFile)
     try {
         bakeOutputAsJson = JSON.parse(bakeOutput);
     } catch (error) {
-        console.error('Failed to parse bake output:');
+        console.error('Failed to parse bake output: ' + error);
         console.error(bakeOutput);
         vscode.window.showErrorMessage('Import Failed! Check console window.');
         return;
@@ -68,7 +68,7 @@ function _importIncludes(bakeOutput, cppConfigFile)
     } catch (error){
         console.error('Failed to process bake output: ' + error);
         console.error(bakeOutputAsJson);
-        vscode.window.showErrorMessage('Import Failed! Check console window.');
+        vscode.window.showErrorMessage('Import Failed! bake up-to-date? Check console window.');
         return;
     }
 
@@ -92,10 +92,17 @@ function _collectIncludesFrom(bakeOutput) {
     let collectedIncludes = new Set<string>();
     Object.keys(bakeOutput).forEach((key: string) => {
         let includes = bakeOutput[key].includes;
+        let absDir = bakeOutput[key].dir;
+        if (!absDir){
+            throw new Error('dir attribute not found in bake output. bake version < 2.42.1? Then run "gem install bake-toolkit"');
+        }
+        
+        let relativeDir = vscode.workspace.asRelativePath(absDir);
+        
         if (includes) {
             includes.forEach(element => {
                 let include = WORKSPACE_INCLUDE_PREFIX + '/'
-                    + path.normalize(path.join(key, element));
+                    + path.normalize(path.join(relativeDir, element));
                 collectedIncludes.add(include);
             });
         }
