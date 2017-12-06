@@ -68,7 +68,7 @@ function _importIncludes(bakeOutput, cppConfigFile)
     } catch (error){
         console.error('Failed to process bake output: ' + error);
         console.error(bakeOutputAsJson);
-        vscode.window.showErrorMessage('Import Failed! bake up-to-date? Check console window.');
+        vscode.window.showErrorMessage('Importing bake config failed! Is bake up-to-date? Check console window.');
         return;
     }
 
@@ -80,12 +80,12 @@ function _importIncludes(bakeOutput, cppConfigFile)
     } catch(error){
         console.error('Failed to update ' + cppConfigFile + ': ' + error );
         console.error(bakeOutputAsJson);
-        vscode.window.showErrorMessage('Import Failed! Check console window.');
+        vscode.window.showErrorMessage('Bake config import Failed! Check console window.');
         return;
     }
 
     // Display a message box to the user
-    vscode.window.showInformationMessage('Import Done!');
+    vscode.window.showInformationMessage('Importing bake config done!');
 }
 
 function _collectIncludesFrom(bakeOutput) {
@@ -96,7 +96,7 @@ function _collectIncludesFrom(bakeOutput) {
         if (!absDir){
             throw new Error('dir attribute not found in bake output. bake version < 2.42.1? Then run "gem install bake-toolkit"');
         }
-        
+
         let relativeDir = vscode.workspace.asRelativePath(absDir);
         
         if (includes) {
