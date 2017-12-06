@@ -6,7 +6,7 @@ const exec = require('child_process').exec;
  */
 class BakeExecutor{
 
-    workspaceFolder: string;
+    private workspaceFolder: string;
     
     constructor(workspaceFolder: string){
         this.workspaceFolder = workspaceFolder;

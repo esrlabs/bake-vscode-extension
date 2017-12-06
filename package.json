@@ -11,7 +11,7 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.importIncludePaths"
+        "workspaceContains:**/Project.meta"
     ],
     "main": "./out/extension",
     "contributes": {
