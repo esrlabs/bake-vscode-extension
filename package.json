@@ -19,8 +19,8 @@
     "contributes": {
         "commands": [
             {
-                "command": "extension.importIncludePaths",
-                "title": "Import Bake Include Paths"
+                "command": "extension.importConfig",
+                "title": "Bake: import config"
             }
         ],
         "configuration": {
