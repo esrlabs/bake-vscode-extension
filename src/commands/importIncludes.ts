@@ -35,7 +35,9 @@ function importIncludes(context: vscode.ExtensionContext) {
     // Step 1: ask bake for all includes
     //
     let bakeExecutor = new BakeExecutor(workspaceFolder);
-    bakeExecutor.execute('-m Main --incs-and-defs=json -a black').then((output) => {
+    let config = vscode.workspace.getConfiguration('bake');
+    let mainProject = config.get('mainProject');
+    bakeExecutor.execute(`-m ${mainProject} --incs-and-defs=json -a black`).then((output) => {
         _importIncludes(output, cppConfigFile);
     }).catch((error) => {
         console.error(error);

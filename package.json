@@ -22,7 +22,18 @@
                 "command": "extension.importIncludePaths",
                 "title": "Import Bake Include Paths"
             }
-        ]
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "bake configuration",
+            "properties": {
+                "bake.mainProject": {
+                    "type": ["string", "null"],
+                    "default": "Main",
+                    "description": "Specifies the name of the main project"
+                }
+            }
+        }        
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

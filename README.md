@@ -16,8 +16,10 @@ Bake is a build tool for C++ projects supporting:
 See [bake installation instructions](https://esrlabs.github.io/bake/install/install_bake.html#how-to-install-bake)
 ## Extension Settings
 
-None yet
+This extension contributes the following settings:
 
+* `bake.mainProject`: define the main project (used to query the includes from bake)
+ 
 ## Known Issues
 
 None
