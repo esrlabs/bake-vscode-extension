@@ -11,10 +11,10 @@ Bake is a build tool for C++ projects supporting:
 
 ## Requirements
 
-- bake installation >= 2.42.1
+- bake installation >= 2.42.1 ([bake installation instructions](https://esrlabs.github.io/bake/install/install_bake.html#how-to-install-bake))
 - Linux (more platforms will be supported soon)
+- an existing `.vscode/c_cpp_properties.json` file ([how to create](https://code.visualstudio.com/docs/languages/cpp#_intellisense))
 
-See [bake installation instructions](https://esrlabs.github.io/bake/install/install_bake.html#how-to-install-bake)
 ## Extension Settings
 
 This extension contributes the following settings:
