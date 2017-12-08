@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import CppConfigFile from '../intellisense/CppConfigFile';
+import logger from '../util/logger';
 
 const WORKSPACE_INCLUDE_PREFIX = '${workspaceRoot}';
 
@@ -47,7 +48,7 @@ class IncludePathsImporter {
             return false;
         }
 
-        console.log('Importing includes done');
+        logger.info('Importing includes done');
         return true;
     }
 

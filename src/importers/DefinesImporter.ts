@@ -2,6 +2,7 @@
 
 import * as vscode from 'vscode';
 import CppConfigFile from '../intellisense/CppConfigFile';
+import logger from '../util/logger';
 
 /**
  * Make IntelliSense aware of our DEFINES by updating 
@@ -40,7 +41,7 @@ class DefinesImporter {
             return false;
         }
 
-        console.log('Importing defines done');
+        logger.info('Importing defines done');
         return true;        
     }
 

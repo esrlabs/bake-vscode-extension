@@ -7,6 +7,7 @@ import DefinesImporter from '../importers/DefinesImporter';
 import IncludePathsImporter from '../importers/IncludePathsImporter';
 import BakeExecutor from '../bake/BakeExecutor';
 import CppConfigFile from '../intellisense/CppConfigFile';
+import logger from '../util/logger';
 
 let workspaceFolder = null;
 
@@ -34,7 +35,7 @@ function importConfig(context: vscode.ExtensionContext) {
     }
 
     workspaceFolder = vscode.workspace.workspaceFolders[0].uri.fsPath;
-    console.log('Detected workspace folder: ' + workspaceFolder);
+    logger.info('Detected workspace folder: ' + workspaceFolder);
 
     let cppConfigFile = new CppConfigFile(workspaceFolder);
     if (!cppConfigFile.exists()) {
@@ -51,7 +52,7 @@ function importConfig(context: vscode.ExtensionContext) {
     bakeExecutor.execute(`-m ${mainProject} --incs-and-defs=json -a black`).then((output) => {
         dispatchBakeOutputToImporter(output);
     }).catch((error) => {
-        console.error(error);
+        logger.error(error);
         vscode.window.showErrorMessage('Import Failed! Check console window.');
         return;
     });
@@ -66,8 +67,8 @@ function dispatchBakeOutputToImporter(bakeOutput) {
     try {
         bakeOutputAsJson = JSON.parse(bakeOutput);
     } catch (error) {
-        console.error('Failed to parse bake output: ' + error);
-        console.error(bakeOutput);
+        logger.error('Failed to parse bake output: ' + error);
+        logger.error(bakeOutput);
         vscode.window.showErrorMessage('Import Failed! Check console window.');
         return;
     }
