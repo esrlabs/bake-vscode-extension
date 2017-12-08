@@ -30,7 +30,7 @@ function importConfig(context: vscode.ExtensionContext) {
     // Check some prerequisites first
     //
     if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length == 0) {
-        vscode.window.showErrorMessage('Open a workspace first');
+        vscode.window.showErrorMessage('Bake: Open a workspace first');
         return;
     }
 
@@ -39,7 +39,7 @@ function importConfig(context: vscode.ExtensionContext) {
 
     let cppConfigFile = new CppConfigFile(workspaceFolder);
     if (!cppConfigFile.exists()) {
-        vscode.window.showErrorMessage('Create a .vscode/c_cpp_properties.json first');
+        vscode.window.showErrorMessage('Bake: Create a .vscode/c_cpp_properties.json first');
         return;
     }
 
@@ -54,7 +54,7 @@ function importConfig(context: vscode.ExtensionContext) {
         dispatchBakeOutputToImporter(output);
     }).catch((error) => {
         logger.error(error);
-        vscode.window.showErrorMessage('Import Failed! Check output window.');
+        vscode.window.showErrorMessage('Bake: Import Failed! Check output window.');
         return;
     });
 }
@@ -74,7 +74,7 @@ function dispatchBakeOutputToImporter(bakeOutput) {
         } else {
             logger.error(bakeOutput);
         }
-        vscode.window.showErrorMessage('Import Failed! Check output window.');
+        vscode.window.showErrorMessage('Bake: Import Failed! Check output window.');
         return;
     }
 
@@ -92,9 +92,9 @@ function dispatchBakeOutputToImporter(bakeOutput) {
     }
 
     if (result) {
-        vscode.window.showInformationMessage('Bake Import Done!');
+        vscode.window.showInformationMessage('Bake: Import Done!');
     } else {
-        vscode.window.showErrorMessage('Import Failed! Check output window.');
+        vscode.window.showErrorMessage('Bake: Import Failed! Check output window.');
     }
 }
 
