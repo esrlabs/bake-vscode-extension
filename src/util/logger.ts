@@ -18,12 +18,12 @@ class Logger{
     }
 
     info(output){
-        this._channel.append(output);
+        this._channel.append(output + '\n');
         console.log(output);
     }
 
     error(output){
-        this._channel.append(output);        
+        this._channel.append(output + '\n');        
         console.error(output);
     }
 }
