@@ -49,11 +49,12 @@ function importConfig(context: vscode.ExtensionContext) {
     let bakeExecutor = new BakeExecutor(workspaceFolder);
     let config = vscode.workspace.getConfiguration('bake');
     let mainProject = config.get('mainProject');
-    bakeExecutor.execute(`-m ${mainProject} --incs-and-defs=json -a black`).then((output) => {
+    let targetConfig = config.get('targetConfig');
+    bakeExecutor.execute(`-m ${mainProject} --incs-and-defs=json -a black ${targetConfig}`).then((output) => {
         dispatchBakeOutputToImporter(output);
     }).catch((error) => {
         logger.error(error);
-        vscode.window.showErrorMessage('Import Failed! Check console window.');
+        vscode.window.showErrorMessage('Import Failed! Check output window.');
         return;
     });
 }
@@ -68,8 +69,12 @@ function dispatchBakeOutputToImporter(bakeOutput) {
         bakeOutputAsJson = JSON.parse(bakeOutput);
     } catch (error) {
         logger.error('Failed to parse bake output: ' + error);
-        logger.error(bakeOutput);
-        vscode.window.showErrorMessage('Import Failed! Check console window.');
+        if (bakeOutput.length == 0){
+            logger.error('=> try to override the targetConfig setting');
+        } else {
+            logger.error(bakeOutput);
+        }
+        vscode.window.showErrorMessage('Import Failed! Check output window.');
         return;
     }
 
@@ -89,7 +94,7 @@ function dispatchBakeOutputToImporter(bakeOutput) {
     if (result) {
         vscode.window.showInformationMessage('Bake Import Done!');
     } else {
-        vscode.window.showErrorMessage('Import Failed! Check console window.');
+        vscode.window.showErrorMessage('Import Failed! Check output window.');
     }
 }
 

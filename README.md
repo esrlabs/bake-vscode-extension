@@ -19,8 +19,8 @@ Bake is a build tool for C++ projects supporting:
 
 This extension contributes the following settings:
 
-* `bake.mainProject`: define the main project (used to query the includes from bake)
- 
+* `bake.mainProject`: override the path to the main project (bake's -m flag). Default is `Main`
+* `bake.targetConfig`: override the name of the target config 
 ## Known Issues
 
 None

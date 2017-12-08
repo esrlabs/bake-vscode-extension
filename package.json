@@ -30,7 +30,11 @@
                 "bake.mainProject": {
                     "type": ["string", "null"],
                     "default": "Main",
-                    "description": "Specifies the name of the main project"
+                    "description": "Override the path to the main project (bake's -m flag)"
+                },
+                "bake.targetConfig": {
+                    "type": ["string", "null"],
+                    "description": "Override the name of the target config"
                 }
             }
         }        
