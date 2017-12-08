@@ -32,6 +32,8 @@ None
 second alpha release, supports:
 - import of defines  on linux only
 
+### 0.1.0
+
 initial alpha release, supports:
 - import of include paths on linux only
 - first try to publish an extension
