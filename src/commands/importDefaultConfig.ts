@@ -12,11 +12,14 @@ import logger from '../util/logger';
 let workspaceFolder = null;
 
 /**
- * Import command to be called from VSCode command menu. 
+ * Default import command. Invoked automatically during startup when a
+ * bake workspace was detected.
+ * 
+ * Imports the build variant marked as default="true"
  * 
  * @param context 
  */
-function importConfig(context: vscode.ExtensionContext) {
+function importDefaultConfig(context: vscode.ExtensionContext) {
 
     // 
     // Check some prerequisites first
@@ -36,28 +39,16 @@ function importConfig(context: vscode.ExtensionContext) {
     }
 
     let bakeConfiguration = new BakeConfiguration();
-    let buildVariants = bakeConfiguration.getBuildVariants();
-    if (!buildVariants){
-        vscode.window.showWarningMessage('Bake: define bake.buildVariants at .vscode/settings.json first');
+    let defaultBuildVariant = bakeConfiguration.getDefaultBuildVariant();
+    if (!defaultBuildVariant){
+        vscode.window.showInformationMessage('Bake: define a default bake.buildVariant in .vscode/settings.json to activate auto-import after startup');
         return;
     }
 
-    let buildVariantsAsNames = Object.keys(buildVariants);
-
-    //Let user select which config to import
-    vscode.window.showQuickPick(buildVariantsAsNames).then((selected)=>{
-        if (!selected){
-            return;
-        }
-        doImportConfig(selected, bakeConfiguration.getBuildVariant(selected));
-    });
-}
-
-function doImportConfig(name, buildVariant){
-    logger.info(`Importing "${name}" build variant`);
-
+    logger.info(`Importing default build variant`);
+    
     let incsAndDefsImporter = new IncsAndDefsImporter(workspaceFolder);
-    incsAndDefsImporter.import(buildVariant)
+    incsAndDefsImporter.import(defaultBuildVariant)
         .then(()=>{
             logger.info(`Done`);
         })
@@ -65,6 +56,7 @@ function doImportConfig(name, buildVariant){
             logger.error(error);
             vscode.window.showErrorMessage('Bake: Import Failed! Check output window.');
         });
+
 }
 
-export default importConfig;
+export default importDefaultConfig;
