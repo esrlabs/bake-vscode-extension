@@ -52,8 +52,10 @@ class IncsAndDefsImporter{
             //set includes
             let includePaths: String[] = element.includePath;
             let updatedIncludePaths = includePaths.filter((include) => !include.startsWith(WORKSPACE_INCLUDE_PREFIX));
-            updatedIncludePaths.push(...collectedIncludes);
+            let newIncludePaths : Set<string> = new Set(collectedIncludes); //assure each entry is unique
+            updatedIncludePaths.push(...newIncludePaths); 
             element.includePath = updatedIncludePaths;
+            
             //set defines
             let newDefines = new Set(element.defines);
             collectedDefines.forEach(element => {
