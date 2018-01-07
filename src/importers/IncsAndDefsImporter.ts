@@ -3,6 +3,8 @@ import BakeConfiguration from "../settings/BakeConfiguration";
 import CppConfigFile from '../intellisense/CppConfigFile';
 import logger from '../util/logger';
 
+const globalAny:any = global;
+
 const deepmerge = require("deepmerge");
 
 const WORKSPACE_INCLUDE_PREFIX = '${workspaceRoot}';
@@ -27,6 +29,9 @@ class IncsAndDefsImporter{
             let output = results.reduce( (prevVal, currentVal) => {
                 return deepmerge(prevVal, currentVal);
             }, {includes : [], defines: []});
+
+            globalAny.bake = {includes: output.includes}; //memorize globally to allow namespace heuristic for new .h/.cpp files
+
             return this.write(output.includes, output.defines);
         });
     }

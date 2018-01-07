@@ -1,61 +1,80 @@
 {
-    "name": "bake",
-    "displayName": "bake",
-    "description": "Support for bake based projects (bake is a build tool, see http://esrlabs.github.io/bake/)",
-    "version": "0.3.1",
-    "publisher": "elektronenhirn",
-    "engines": {
-        "vscode": "^1.18.0"
-    },
-    "license": "MIT license",
-    "icon": "logo_conformant_128.png",
-    "categories": [
-        "Other"
+  "name": "bake",
+  "displayName": "bake",
+  "description": "Support for bake based projects (bake is a build tool, see http://esrlabs.github.io/bake/)",
+  "version": "0.3.1",
+  "publisher": "elektronenhirn",
+  "engines": {
+    "vscode": "^1.18.0"
+  },
+  "license": "MIT license",
+  "icon": "logo_conformant_128.png",
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/Project.meta"
+  ],
+  "main": "./out/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "bake.importConfig",
+        "title": "Bake: import config"
+      },
+      {
+        "command": "bake.createNewHeaderFile",
+        "title": "New .h File"
+      },
+      {
+        "command": "bake.createNewCppFile",
+        "title": "New .cpp File"
+      }
     ],
-    "activationEvents": [
-        "workspaceContains:**/Project.meta"
-    ],
-    "main": "./out/extension",
-    "contributes": {
-        "commands": [
-            {
-                "command": "extension.importConfig",
-                "title": "Bake: import config"
+    "configuration": {
+      "type": "object",
+      "title": "bake configuration",
+      "properties": {
+        "bake.buildVariants": {
+          "type": "object",
+          "default": {
+            "ExampleVariant": {
+              "project": "Main",
+              "config": "arm-x64",
+              "default": "true"
             }
-        ],
-        "configuration": {
-            "type": "object",
-            "title": "bake configuration",
-            "properties": {
-                "bake.buildVariants": {
-                    "type": "object",
-                    "default": {
-                        "ExampleVariant": {
-                            "project": "Main",
-                            "config": "arm-x64",
-                            "default": "true"
-                        }
-                    },
-                    "description": "list build variants (project/config combinations) you want to use to generate imports and defines from"
-                }
-            }
+          },
+          "description": "list build variants (project/config combinations) you want to use to generate imports and defines from"
         }
+      }
     },
-    "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test"
-    },
-    "devDependencies": {
-        "typescript": "^2.6.1",
-        "vscode": "^1.1.6",
-        "@types/node": "^7.0.43",
-        "@types/mocha": "^2.2.42"
-    },
-    "dependencies": {
-        "jsonfile": "^4.0.0",
-        "deepmerge": "2.0.1"
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "bake.createNewHeaderFile"
+        },
+        {
+          "command": "bake.createNewCppFile"
+        }
+      ]
     }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "typescript": "^2.6.1",
+    "vscode": "^1.1.6",
+    "@types/node": "^7.0.43",
+    "@types/mocha": "^2.2.42"
+  },
+  "dependencies": {
+    "deepmerge": "2.0.1",
+    "dot": "^1.1.2",
+    "jsonfile": "^4.0.0"
+  }
 }

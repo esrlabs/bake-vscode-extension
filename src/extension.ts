@@ -4,6 +4,9 @@
 import * as vscode from 'vscode';
 import importConfig from './commands/importConfig'
 import importDefaultConfig from './commands/importDefaultConfig'
+import newHeaderFile from './commands/newHeaderFile'
+import newCppFile from './commands/newCppFile'
+
 import { configure } from 'vscode/lib/testrunner';
 import logger from './util/logger';
 
@@ -16,12 +19,21 @@ export function activate(context: vscode.ExtensionContext) {
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('extension.importConfig', () => {
+    let disposable = vscode.commands.registerCommand('bake.importConfig', (context) => {
         importConfig(context);
     });
-
     context.subscriptions.push(disposable);
-    
+
+    disposable = vscode.commands.registerCommand('bake.createNewHeaderFile', (context) => {
+        newHeaderFile(context);
+    });
+    context.subscriptions.push(disposable);
+
+    disposable = vscode.commands.registerCommand('bake.createNewCppFile', (context) => {
+        newCppFile(context);
+    });
+    context.subscriptions.push(disposable);
+
     importDefaultConfig(context);
 }
 

@@ -8,6 +8,7 @@ Bake is a build tool for C++ projects supporting:
 
 - Import include paths into VS Code
 - Import C/C++ defines into VS Code
+- Create new .h .cpp files based from templates (from file explorer's context menu)
 
 ## Requirements
 
@@ -46,6 +47,8 @@ Deprecated (the following settings are now ignored):
 None
 
 ## Release Notes
+### 0.4.0
+- introduced feature to create .h .cpp files based from templates
 
 ### 0.3.0
 - introduced support for multiple build variants (combinations of project and config)
