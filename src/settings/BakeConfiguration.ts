@@ -1,6 +1,12 @@
 import * as vscode from 'vscode';
 import logger from '../util/logger';
 
+const EXAMPLE_VARIANT = {
+    "project": "MyMain",
+    "config": "arm-x64",
+    "default": "true"
+}
+
 const EXAMPLE_VARIANT_NAME = "ExampleVariant"; //need to ignore that one
 
 /**
@@ -47,7 +53,12 @@ class BakeConfiguration{
 
     getBuildVariants(): Object{
         let buildVariants = this.config.get("buildVariants");
-        delete buildVariants[EXAMPLE_VARIANT_NAME];
+        for (let key in buildVariants){
+            if (key === EXAMPLE_VARIANT_NAME &&
+                JSON.stringify(buildVariants[key]) === JSON.stringify(EXAMPLE_VARIANT)){
+                delete buildVariants[key]; //ignore the example
+            }
+        }
         return buildVariants;
     }
 

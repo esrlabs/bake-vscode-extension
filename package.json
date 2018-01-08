@@ -39,7 +39,7 @@
                     "type": "object",
                     "default": {
                         "ExampleVariant": {
-                            "project": "Main",
+                            "project": "MyMain",
                             "config": "arm-x64",
                             "default": "true"
                         }
