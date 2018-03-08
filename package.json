@@ -2,7 +2,7 @@
     "name": "bake",
     "displayName": "bake",
     "description": "Support for bake based projects (bake is a build tool, see http://esrlabs.github.io/bake/)",
-    "version": "0.4.1",
+    "version": "0.5.0",
     "publisher": "elektronenhirn",
     "engines": {
         "vscode": "^1.18.0"
