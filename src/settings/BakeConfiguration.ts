@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import BakeFile from '../bake/BakeFile'
 import logger from '../util/logger';
 
 const EXAMPLE_VARIANT = {
@@ -10,12 +11,13 @@ const EXAMPLE_VARIANT = {
 const EXAMPLE_VARIANT_NAME = "ExampleVariant"; //need to ignore that one
 
 /**
- * Provides access to all bake-extension related settings in 
+ * Provides access to all bake-extension related settings in
  *   .vscode/settings.json
  */
 class BakeConfiguration{
 
     private config;
+    private path = require('path')
 
     constructor(){
         this.config = vscode.workspace.getConfiguration('bake');
@@ -26,9 +28,38 @@ class BakeConfiguration{
         if (this.config.has("targetConfig")){
             vscode.window.showWarningMessage("bake: setting bake.targetConfig is deprecated. use bake.buildVariants instead.");
         }
+        /*
         if (this.getNumberOfBuildVariants() == 0){
             vscode.window.showWarningMessage("bake: adjust setting bake.buildVariants to match your workspace's bake config.");
         }
+        */
+    }
+
+    createBuildVariant(project: BakeFile, target: string): Object {
+        const projectPath = project.getFolder()
+        const workspacePath = project.getWorkpaceFolder()
+        const relativePath = this.path.relative(workspacePath, projectPath)
+        const existingVariants = this.getBuildVariants()
+        // Check for existing matching configurations
+        let name = `${project.getName()}_${target}`
+        for (let variantName in existingVariants) {
+            let variant = existingVariants[variantName]
+            if (variant.importFrom){
+                continue
+            }
+            if (relativePath === variant.project &&
+                target == variant.config) {
+                return variant
+            }
+            if (name == variantName)
+            {
+                throw new Error(`Unmatching variant already exists: ${name}`)
+            }
+        }
+        // If there is a better way to create the JSON object, without going through a string,
+        // please do not hesitate tp update
+        let stringConfig = JSON.stringify({ "project": relativePath, "config": target, "default": "false" })
+        return JSON.parse(stringConfig)
     }
 
     getDefaultBuildVariant(){
@@ -38,7 +69,6 @@ class BakeConfiguration{
         }
 
         let defaultTarget = undefined;
-
         for (let name in targets){
             let target = targets[name];
             if (target.default != undefined &&

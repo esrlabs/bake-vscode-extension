@@ -31,7 +31,7 @@ function importConfig(context: vscode.ExtensionContext) {
 
     let cppConfigFile = new CppConfigFile(workspaceFolder);
     if (!cppConfigFile.exists()) {
-        vscode.window.showErrorMessage('Bake: Create an IntelliSense config file (.vscode/c_cpp_properties.json) first');
+        vscode.window.showErrorMessage('Bake: Create an IntelliSense config file (.vscode/c_cpp_properties.json) first. Command "C/Cpp: Edit Configuration..." and save');
         return;
     }
 
