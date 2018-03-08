@@ -45,7 +45,8 @@ function selectConfiguration(context: vscode.ExtensionContext) {
         return bakeFile.getTargets()
     })
     .then( bakeTargets => {
-        return vscode.window.showQuickPick(bakeTargets)
+        let options = { placeHolder: `Select target in ${bakeFile.getName()}` }
+        return vscode.window.showQuickPick(bakeTargets, options)
     })
     .then( selectedTarget => {
         let configuration = new BakeConfiguration()
