@@ -14,14 +14,14 @@ let workspaceFolder = null;
 /**
  * Default import command. Invoked automatically during startup when a
  * bake workspace was detected.
- * 
+ *
  * Imports the build variant marked as default="true"
- * 
- * @param context 
+ *
+ * @param context
  */
 function importDefaultConfig(context: vscode.ExtensionContext) {
 
-    // 
+    //
     // Check some prerequisites first
     //
     if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length == 0) {
@@ -34,19 +34,19 @@ function importDefaultConfig(context: vscode.ExtensionContext) {
 
     let cppConfigFile = new CppConfigFile(workspaceFolder);
     if (!cppConfigFile.exists()) {
-        vscode.window.showErrorMessage('Bake: Create an IntelliSense config file (.vscode/c_cpp_properties.json) first');
+        vscode.window.showErrorMessage('Bake: Create an IntelliSense config file (.vscode/c_cpp_properties.json) first. Command "C/Cpp: Edit Configuration..." and save');
         return;
     }
 
     let bakeConfiguration = new BakeConfiguration();
     let defaultBuildVariant = bakeConfiguration.getDefaultBuildVariant();
     if (!defaultBuildVariant){
-        vscode.window.showInformationMessage('Bake: define a default bake.buildVariant in .vscode/settings.json to activate auto-import after startup');
+        vscode.window.setStatusBarMessage('Bake: define a default bake.buildVariant in .vscode/settings.json to activate auto-import after startup', 10000);
         return;
     }
 
     logger.info(`Importing default build variant`);
-    
+
     let incsAndDefsImporter = new IncsAndDefsImporter(workspaceFolder);
     incsAndDefsImporter.import(defaultBuildVariant)
         .then(()=>{
