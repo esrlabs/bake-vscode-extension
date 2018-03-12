@@ -3,6 +3,8 @@ import BakeConfiguration from "../settings/BakeConfiguration";
 import CppConfigFile from '../intellisense/CppConfigFile';
 import logger from '../util/logger';
 
+import * as vscode from 'vscode'
+
 const globalAny:any = global;
 
 const deepmerge = require("deepmerge");
@@ -21,7 +23,7 @@ class IncsAndDefsImporter{
 
     import(buildVariant){
         let buildVariants = this.resolveImports(buildVariant);
-    
+
         let bakeRuns = buildVariants.map((buildVariant) => {
             return this.incsAndDefsExecutor.execute(buildVariant.project, buildVariant.config);
         });
@@ -49,7 +51,7 @@ class IncsAndDefsImporter{
         }, buildVariant.project ? [buildVariant] : []);
     }
 
-    private write(collectedIncludes, collectedDefines) : Promise<void>{ 
+    private write(collectedIncludes, collectedDefines) : Promise<void>{
         let cppConfigFile = new CppConfigFile(this.workspaceFolder);
         let cppConfig = cppConfigFile.read();
 
@@ -58,9 +60,9 @@ class IncsAndDefsImporter{
             let includePaths: String[] = element.includePath;
             let updatedIncludePaths = includePaths.filter((include) => !include.startsWith(WORKSPACE_INCLUDE_PREFIX));
             let newIncludePaths : Set<string> = new Set(collectedIncludes); //assure each entry is unique
-            updatedIncludePaths.push(...newIncludePaths); 
+            updatedIncludePaths.push(...newIncludePaths);
             element.includePath = updatedIncludePaths;
-            
+
             //set defines
             let newDefines = new Set(element.defines);
             collectedDefines.forEach(element => {

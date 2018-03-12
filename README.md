@@ -2,13 +2,14 @@ This extension adds support for bake based C++ projects to VS Code.
 
 Bake is a build tool for C++ projects supporting:
 - multiple modules (library, executable)
-- multiple targets 
+- multiple targets
 
 ## Features
 
 - Import include paths into VS Code
 - Import C/C++ defines into VS Code
 - Create new .h .cpp files based from templates (from file explorer's context menu)
+- Search for and execute targets from bake files
 
 ## Requirements
 
@@ -25,7 +26,7 @@ This extension contributes the following settings:
     "bake.buildVariants": {
         "All": {
             "importFrom": ["Test", "Main"],
-            "default": "true"        
+            "default": "true"
         },
         "Test": {
             "project": "Tests",
@@ -41,12 +42,19 @@ This extension contributes the following settings:
 
 Deprecated (the following settings are now ignored):
 * `bake.mainProject`: override the path to the main project (bake's -m flag). Default is `Main`
-* `bake.targetConfig`: override the name of the target config 
+* `bake.targetConfig`: override the name of the target config
 ## Known Issues
 
 None
 
 ## Release Notes
+## 0.6.0
+- Register found bake targets as build tasks
+- Search for and open Project.meta files for editing
+
+## 0.5.0
+- Introduced search for Project.meta files to configure workspace with
+
 ### 0.4.0
 - introduced feature to create .h .cpp files based from templates
 

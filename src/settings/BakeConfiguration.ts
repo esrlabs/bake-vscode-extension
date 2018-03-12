@@ -36,9 +36,7 @@ class BakeConfiguration{
     }
 
     createBuildVariant(project: BakeFile, target: string): Object {
-        const projectPath = project.getFolder()
-        const workspacePath = project.getWorkpaceFolder()
-        const relativePath = this.path.relative(workspacePath, projectPath)
+        const relativePath = project.getPathInWorkspace()
         const existingVariants = this.getBuildVariants()
         // Check for existing matching configurations
         let name = `${project.getName()}_${target}`

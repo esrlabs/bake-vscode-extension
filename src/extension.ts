@@ -2,7 +2,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import selectConfiguration from './commands/selectConfiguration'
+import {selectProject, openProject, selectAndConfigureTarget, registerBakeTasks} from './commands/selectConfiguration'
 import importConfig from './commands/importConfig'
 import importDefaultConfig from './commands/importDefaultConfig'
 import newHeaderFile from './commands/newHeaderFile'
@@ -10,6 +10,8 @@ import newCppFile from './commands/newCppFile'
 
 import { configure } from 'vscode/lib/testrunner';
 import logger from './util/logger';
+
+let bakeTaskProvider: vscode.Disposable | undefined;
 
 
 // this method is called when your extension is activated
@@ -26,10 +28,21 @@ export function activate(context: vscode.ExtensionContext) {
     });
     context.subscriptions.push(disposable);
 
-    disposable = vscode.commands.registerCommand('bake.selectConfiguration', (context) => {
-        selectConfiguration(context);
+    disposable = vscode.commands.registerCommand('bake.selectProject', (context) => {
+        selectProject(context);
     });
     context.subscriptions.push(disposable);
+
+    disposable = vscode.commands.registerCommand('bake.openProject', (context) => {
+        openProject(context);
+    });
+    context.subscriptions.push(disposable);
+
+    disposable = vscode.commands.registerCommand('bake.selectAndConfigureTarget', (context) => {
+        selectAndConfigureTarget(context);
+    });
+    context.subscriptions.push(disposable);
+
 
     disposable = vscode.commands.registerCommand('bake.createNewHeaderFile', (context) => {
         newHeaderFile(context);
@@ -41,9 +54,13 @@ export function activate(context: vscode.ExtensionContext) {
     });
     context.subscriptions.push(disposable);
 
+    bakeTaskProvider = registerBakeTasks(context);
     importDefaultConfig(context);
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {
+    if (bakeTaskProvider) {
+        bakeTaskProvider.dispose();
+    }
 }
