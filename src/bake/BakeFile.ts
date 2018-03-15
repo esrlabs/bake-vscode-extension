@@ -38,38 +38,32 @@ class BakeFile{
         return null
     }
 
-    getPathInWorkspace() : string {
-        let folder = this.getWorkspaceFolder()
-        let relativePath = this.path.relative(folder.uri.fsPath, this.getFolderPath())
-        // Convert to slashes...
-        return relativePath.replace("\\", "/")
-    }
-
-    getTargets() : Promise<any> {
-        let directory = this.getFolderPath()
+    getTargets() : Thenable<any> {
+        let directory = this.getFolder()
         logger.info(`Reading bake targets from diectory ${directory}`)
-        let bakeExecutor = new BakeExecutor(directory)
 
-        const bakeExecutionPromise = bakeExecutor.execute(`--list`)
-        return bakeExecutionPromise.then((output) => {
-            return new Promise((resolve, reject)=>{
-                let re = /\*\s*(\w+)/g
-                let matches = []
-                output.replace(re, function(match, target) {
-                    matches.push(target)
-                    return target
-                })
-                if (matches == null || matches.length == 0) {
-                    logger.error(`Found no targets in bake Project.meta file.`)
-                    reject("Failed to find any targets")
-                } else {
-                    // RegEx cannot return array of substring matches, so match again
-                    resolve(matches)
+        return vscode.workspace.openTextDocument(this.filePath)
+        .then( document => {
+            // Match all targets except those commented out
+            let re = /^[^#A-Za-z0-9]*(?:ExecutableConfig|LibraryConfig|CustomConfig)\s+(\w*)/
+            let matches = []
+            for(var l=0; l<document.lineCount; ++l)
+            {
+                let line = document.lineAt(l)
+                let match = line.text.match(re)
+                if(match) {
+                    matches.push(match[1])
                 }
-            })
-        }).catch((error) => {
-            logger.error(error)
-            throw new Error("Bake failed to find targets. Does the meta file have targets? Is installed bake up-to-date?")
+            }
+            if (matches.length == 0) {
+                throw new Error("Found no targets in bake Project.meta file.")
+            } else {
+                return matches
+            }
+        }).then(null, (e) => {
+            logger.error("Found no targets in bake Project.meta file.")
+            vscode.window.showErrorMessage(e.toString());
+            throw e
         })
     }
 
