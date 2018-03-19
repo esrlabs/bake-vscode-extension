@@ -1,6 +1,11 @@
 import * as vscode from 'vscode'
-import BakeExecutor from '../bake/BakeExecutor'
+import BakeConfiguration from '../settings/BakeConfiguration'
 import logger from '../util/logger'
+
+interface BakeTaskDefinition extends vscode.TaskDefinition {
+    target?: string;
+    file?: string;
+}
 
 /**
  */
@@ -10,7 +15,7 @@ class BakeFile{
     private filePath
 
     constructor(filePath: string){
-        this.filePath = filePath
+        this.filePath = filePath.replace(/\\/g, "/")
     }
 
     getName(): string {
@@ -23,7 +28,7 @@ class BakeFile{
     }
 
     getFolderPath(): string {
-        return this.path.dirname(this.filePath)
+        return this.path.dirname(this.filePath).replace(/\\/g, "/")
     }
 
     getWorkspaceFolder() : vscode.WorkspaceFolder {
@@ -38,10 +43,15 @@ class BakeFile{
         return null
     }
 
-    getTargets() : Thenable<any> {
-        let directory = this.getFolder()
-        logger.info(`Reading bake targets from diectory ${directory}`)
+    getPathInWorkspace() : string {
+        let folder = this.getWorkspaceFolder()
+        let relativePath = this.path.relative(folder.uri.fsPath, this.getFolderPath())
+        // Convert to slashes...
+        return relativePath.replace(/\\/g, "/")
+    }
 
+    getTargets() : Thenable<string[]> {
+        let directory = this.getFolderPath()
         return vscode.workspace.openTextDocument(this.filePath)
         .then( document => {
             // Match all targets except those commented out
@@ -56,20 +66,45 @@ class BakeFile{
                 }
             }
             if (matches.length == 0) {
-                throw new Error("Found no targets in bake Project.meta file.")
+                throw new Error(`Found no targets in bake Project.meta file ${this.getFilePath()}`)
             } else {
                 return matches
             }
         }).then(null, (e) => {
-            logger.error("Found no targets in bake Project.meta file.")
-            vscode.window.showErrorMessage(e.toString());
-            throw e
+            logger.error(e.toString())
+            return []
         })
     }
 
-    getBuildArguments(target: string) : string
-    {
-        return `-j6 -m ${this.getPathInWorkspace()} ${target} -a black`
+    /**
+     * Creates a VSCode build task that can be provided and
+     * saved to build given target.
+     *
+     * @param target Name of a target in this Bake file.
+     */
+    createBuildTask(target: string) : vscode.Task {
+        let configuration = new BakeConfiguration()
+        let numCores = configuration.getNumberOfParallelBuilds()
+        let adaptCompiler = configuration.getUnitTestAdaptType()
+        let runTestsOnBuild = configuration.shallUnitTestRunOnBuild()
+        let problemMatcher = configuration.getDefaultProblemMatcher()
+        let path = this.getPathInWorkspace()
+        let name = `Build '${target}' (${path})`
+        let doAdapt = (target.toLowerCase().includes("unittest") && adaptCompiler)? `--adapt ${adaptCompiler}` : ""
+        let doRun =  (target.toLowerCase().includes("unittest") && runTestsOnBuild)? "--do run" : ""
+        let commandLine = `bake -j${numCores} -m ${path} ${target} -a black ${doAdapt} ${doRun}`
+        let kind: BakeTaskDefinition = {
+            type: "bake",
+            target: target,
+            file: path
+        }
+        let task = new vscode.Task(kind, this.getWorkspaceFolder(), name , "bake")
+        task.group = vscode.TaskGroup.Build
+        task.execution = new vscode.ShellExecution(commandLine)
+        if (problemMatcher) {
+            task.problemMatchers.push(problemMatcher)
+        }
+        return task
     }
 }
 

@@ -2,9 +2,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import {selectProject, openProject, selectAndConfigureTarget, registerBakeTasks} from './commands/selectConfiguration'
-import importConfig from './commands/importConfig'
-import importDefaultConfig from './commands/importDefaultConfig'
+import {setWorkspaceToTarget, addTargetToWorkspace, registerBakeTasks} from './commands/selectConfiguration'
 import newHeaderFile from './commands/newHeaderFile'
 import newCppFile from './commands/newCppFile'
 
@@ -23,23 +21,13 @@ export function activate(context: vscode.ExtensionContext) {
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('bake.importConfig', (context) => {
-        importConfig(context);
+    let disposable = vscode.commands.registerCommand('bake.setIncludesToTarget', (context) => {
+        setWorkspaceToTarget(context);
     });
     context.subscriptions.push(disposable);
 
-    disposable = vscode.commands.registerCommand('bake.selectProject', (context) => {
-        selectProject(context);
-    });
-    context.subscriptions.push(disposable);
-
-    disposable = vscode.commands.registerCommand('bake.openProject', (context) => {
-        openProject(context);
-    });
-    context.subscriptions.push(disposable);
-
-    disposable = vscode.commands.registerCommand('bake.selectAndConfigureTarget', (context) => {
-        selectAndConfigureTarget(context);
+    disposable = vscode.commands.registerCommand('bake.addTargetToIncludes', (context) => {
+        addTargetToWorkspace(context);
     });
     context.subscriptions.push(disposable);
 
@@ -55,7 +43,6 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable);
 
     bakeTaskProvider = registerBakeTasks(context);
-    importDefaultConfig(context);
 }
 
 // this method is called when your extension is deactivated

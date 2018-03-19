@@ -20,27 +20,14 @@ Bake is a build tool for C++ projects supporting:
 ## Extension Settings
 
 This extension contributes the following settings:
-* `bake.buildVariants`: mandatory setting to define build variants to retrieve includes/defines from. A buildVariant is defined by a project (bake's -m flag) and a build config. Example config:
+* `bake.parallelBuildNum`: Number of processes used for parallel bake builds (-j parameter). Global setting that defaults to `8`.
+* `bake.unitTestsAdapt`: Adapt for setting used compiler in unit test builds. Global setting that defaults to  `gcc`.
+* `bake.runUnitTestsOnBuild`: Boolean whether unit tests shall be run after a successfull unit test build. Global setting that defaults to `true`.
+* `bake.defaultPromblemMatcher`: Used problem finder in the output during builds. Default to `$gcc`. Can be overwritten per task in task configuration.
 
-```
-    "bake.buildVariants": {
-        "All": {
-            "importFrom": ["Test", "Main"],
-            "default": "true"
-        },
-        "Test": {
-            "project": "Tests",
-            "config": "i386-x64",
-        },
-        "Target": {
-            "project": "Main",
-            "config": "arm-x64"
-        }
-    }
-
-```
 
 Deprecated (the following settings are now ignored):
+* `bake.buildVariants`: mandatory setting to define build variants to retrieve includes/defines from.
 * `bake.mainProject`: override the path to the main project (bake's -m flag). Default is `Main`
 * `bake.targetConfig`: override the name of the target config
 ## Known Issues
@@ -49,8 +36,8 @@ None
 
 ## Release Notes
 ## 0.6.0
-- Register found bake targets as build tasks
-- Search for and open Project.meta files for editing
+- Register bake targets as build targets with the taskProvider
+- Searches entire workspace for targets for setting include paths or build
 
 ## 0.5.0
 - Introduced search for Project.meta files to configure workspace with
