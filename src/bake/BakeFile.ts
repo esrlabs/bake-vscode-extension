@@ -43,7 +43,7 @@ class BakeFile{
         return null
     }
 
-    getPathInWorkspace() : string {
+  getPathInWorkspace() : string {
         let folder = this.getWorkspaceFolder()
         let relativePath = this.path.relative(folder.uri.fsPath, this.getFolderPath())
         // Convert to slashes...
