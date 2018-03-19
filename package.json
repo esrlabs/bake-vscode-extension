@@ -2,7 +2,7 @@
     "name": "bake",
     "displayName": "bake",
     "description": "Support for bake based projects (bake is a build tool, see http://esrlabs.github.io/bake/)",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "publisher": "elektronenhirn",
     "engines": {
         "vscode": "^1.18.0"
@@ -19,12 +19,12 @@
     "contributes": {
         "commands": [
             {
-                "command": "bake.importConfig",
-                "title": "Bake: import config"
+                "command": "bake.setIncludesToTarget",
+                "title": "Bake: set target as include paths"
             },
             {
-                "command": "bake.selectConfiguration",
-                "title": "Bake: find and select target in Project.meta"
+                "command": "bake.addTargetToIncludes",
+                "title": "Bake: add target include to existing paths"
             },
             {
                 "command": "bake.createNewHeaderFile",
@@ -39,16 +39,25 @@
             "type": "object",
             "title": "bake configuration",
             "properties": {
-                "bake.buildVariants": {
-                    "type": "object",
-                    "default": {
-                        "ExampleVariant": {
-                            "project": "MyMain",
-                            "config": "arm-x64",
-                            "default": "true"
-                        }
-                    },
-                    "description": "list build variants (project/config combinations) you want to use to generate imports and defines from"
+                "bake.parallelBuildNum": {
+                    "type": "integer",
+                    "default": 8,
+                    "description": "The number of files bake shall build in parallel."
+                },
+                "bake.unitTestsAdapt": {
+                    "type": "string",
+                    "default": "gcc",
+                    "description": "If unit tests targets are detected, call bake with adapt."
+                },
+                "bake.runUnitTestsOnBuild": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Will execute the build unit tests after a successfull build."
+                },
+                "bake.defaultPromblemMatcher": {
+                    "type": "string",
+                    "default": "$gcc",
+                    "description": "Problem matcher for build output."
                 }
             }
         },
@@ -61,7 +70,16 @@
                     "command": "bake.createNewCppFile"
                 }
             ]
-        }
+        },
+        "taskDefinitions": [
+            {
+                "type": "bake",
+                "properties": {
+                    "target": { "type": "string", "description": "Target in Project.meta" },
+                    "file": { "type": "string", "description": "Project.meta file" }
+                }
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

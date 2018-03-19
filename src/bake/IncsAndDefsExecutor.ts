@@ -1,8 +1,14 @@
 import BakeExecutor from '../bake/BakeExecutor';
+import BakeConfiguration from '../settings/BakeConfiguration'
 import * as jsonfile from 'jsonfile';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import logger from '../util/logger';
+
+interface WorkspaceUpdate {
+    includes: string[];
+    defines: string[];
+}
 
 const WORKSPACE_INCLUDE_PREFIX = '${workspaceRoot}';
 
@@ -22,11 +28,14 @@ class IncsAndDefsExecutor{
      * @param config the config to determine the incs-and-defs for
      * @return Promise resolved with an object {includes: string[], defines: [string] }
      */
-    execute(project: string, config: string): Promise<Object>{
+    execute(project: string, config: string): Promise<WorkspaceUpdate>{
+        let configuration = new BakeConfiguration()
+        let adaptCompiler = configuration.getUnitTestAdaptType()
+        let doAdapt = (config.toLowerCase().includes("unittest") && adaptCompiler)? `--adapt ${adaptCompiler} ` : ""
         let bakeExecutor = new BakeExecutor(this.workspaceFolder);
 
         logger.info(` Reading bake config for build variant project=${project} config=${config}`);
-        return bakeExecutor.execute(`-m ${project} --incs-and-defs=json -a black ${config}`)
+        return bakeExecutor.execute(`-m ${project} --incs-and-defs=json -a black ${doAdapt}${config}`)
             .then((output) => {
                 return this.parseOutput(output);
             }).then((output) => {
@@ -39,7 +48,7 @@ class IncsAndDefsExecutor{
             });
     }
 
-    private parseOutput(output: string) : Promise<Object>{
+    private parseOutput(output: string) : Promise<WorkspaceUpdate>{
         return new Promise((resolve, reject)=>{
             try {
                 let bakeOutputAsObj = JSON.parse(output);
@@ -103,7 +112,7 @@ class IncsAndDefsExecutor{
         });
         return [...collectedDefines];
     }
-    
+
 
 
 }
