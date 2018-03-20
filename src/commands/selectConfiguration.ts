@@ -6,13 +6,9 @@ import * as path from 'path'
 
 import IncsAndDefsImporter from '../importers/IncsAndDefsImporter'
 import BakeConfiguration from '../settings/BakeConfiguration'
-import BakeFile from '../bake/BakeFile'
+import {BakeFile, BakeTargetItem} from '../bake/BakeFile'
 import logger from '../util/logger'
 
-interface BakeTargetItem extends vscode.QuickPickItem {
-    bakeFile: BakeFile;
-    target: string;
-}
 
 /**
  * Will repalce all includes/defines according what
@@ -161,22 +157,9 @@ async function searchAndSelectTarget() : Promise<BakeTargetItem> {
 async function getAvailableTargets() : Promise<Promise<BakeTargetItem[]>[]> {
     let allFilesPromise = vscode.workspace.findFiles('**/Project.meta')
     return allFilesPromise.then( foundBakeUris => {
-        let createItems = async (f:BakeFile, folder, relativeFolder) : Promise<BakeTargetItem[]> => {
-            let targets = await f.getTargets()
-            return targets.map( t => {
-                let item : BakeTargetItem = {
-                    bakeFile: f,
-                    target: t,
-                    description: `Target ${t} in ${relativeFolder}`,
-                    detail: folder,
-                    label: t
-                }
-                return item
-            })
-        }
         let targetPromises = foundBakeUris.map (u => {
             let bakeFile = new BakeFile(u.fsPath)
-            return createItems(bakeFile, bakeFile.getFolderPath(), bakeFile.getPathInWorkspace())
+            return bakeFile.createTargetItems()
         })
         return targetPromises
     })

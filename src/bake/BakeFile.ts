@@ -7,9 +7,14 @@ interface BakeTaskDefinition extends vscode.TaskDefinition {
     file?: string;
 }
 
+export interface BakeTargetItem extends vscode.QuickPickItem {
+    bakeFile: BakeFile;
+    target: string;
+}
+
 /**
  */
-class BakeFile{
+export class BakeFile{
 
     private path = require('path')
     private filePath
@@ -105,6 +110,25 @@ class BakeFile{
             task.problemMatchers.push(problemMatcher)
         }
         return task
+    }
+
+    /**
+     * Creates a list of targets suitable for vscode selection boxes.
+     */
+    async createTargetItems() : Promise<BakeTargetItem[]> {
+        let targets = await this.getTargets()
+        let relativeFolder = this.getPathInWorkspace()
+        let folder = this.getFolderPath()
+        return targets.map( t => {
+            let item : BakeTargetItem = {
+                bakeFile: this,
+                target: t,
+                description: `Target ${t} in ${relativeFolder}`,
+                detail: folder,
+                label: t
+            }
+            return item
+        })
     }
 }
 

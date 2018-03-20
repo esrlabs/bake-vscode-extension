@@ -17,14 +17,28 @@
     ],
     "main": "./out/extension",
     "contributes": {
+        "languages": [
+            {
+                "id": "bake",
+                "aliases": [
+                    "Bake"
+                ],
+                "extensions": [
+                    "Project.meta"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
         "commands": [
             {
                 "command": "bake.setIncludesToTarget",
-                "title": "Bake: set target as include paths"
+                "title": "Set target as include paths",
+                "category": "Bake"
             },
             {
                 "command": "bake.addTargetToIncludes",
-                "title": "Bake: add target include to existing paths"
+                "title": "Add target include to existing paths",
+                "category": "Bake"
             },
             {
                 "command": "bake.createNewHeaderFile",
