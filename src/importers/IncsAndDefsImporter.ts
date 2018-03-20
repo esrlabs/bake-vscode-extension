@@ -41,7 +41,7 @@ class IncsAndDefsImporter{
 
         cppConfig.configurations.forEach(element => {
             //set includes
-            let includePaths: string[] = element.includePath;
+            let includePaths: string[] = element.includePath
             let existingIncludePaths: string[] = includePaths
 
             if (overwrite) {
@@ -55,12 +55,16 @@ class IncsAndDefsImporter{
             element.includePath = Array.from(newIncludePaths)
 
             //set defines
-            // TODO: To filter the defines correctly we need to know which are contributed
-            let newDefines = new Set(element.defines);
+            let defines = new Set()
+            if(!overwrite) {
+                element.defines.forEach(element => {
+                    defines.add(element)
+                })
+            }
             collectedDefines.forEach(element => {
-                newDefines.add(element);
+                defines.add(element);
             });
-            element.defines = [...newDefines];
+            element.defines = Array.from(defines)
         });
         cppConfigFile.write(cppConfig);
 
