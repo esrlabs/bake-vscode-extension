@@ -1,0 +1,72 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "scopeName": "source.bake",
+    "patterns":[{
+        "include": "#keywords"
+    },
+    {
+        "include": "#strings"
+    },
+    {
+        "include": "#comments"
+    }],
+    "repository": {
+        "comments": {
+            "patterns": [{
+                "name": "comment.line.bake",
+                "match": "#.*"
+            }]
+        },
+        "keywords": {
+            "patterns": [{
+                "name": "keyword.config.bake",
+                "match": "\\b(CustomConfig|LibraryConfig|ExecutableConfig)\\b"
+            },
+            {
+                "name": "keyword.steps.bake",
+                "match": "\\b(StartupSteps|PreSteps|PostSteps)\\b"
+            },
+            {
+                "name": "keyword.files.bake",
+                "match": "\\b(Files|ExcludeFiles|IncludeDir)\\b"
+            },
+            {
+                "name": "keyword.dependency.bake",
+                "match": "\\b(UserLibrary|Dependency)\\b"
+            }]
+        },
+        "strings": {
+            "name": "string.quoted.double.bake",
+            "begin": "\"",
+            "end": "\"",
+            "patterns": [{
+                "name": "constant.character.escape.bake",
+                "match": "\\\\."
+            },
+            {
+                "include": "#bake_variables"
+            }]
+        },
+        "bake_variables": {
+            "name": "variable.name.bake",
+            "begin": "\\$\\(",
+            "end": "\\)",
+            "patterns": [{
+                "name": "variable.language.name.bake",
+                "match": "(MainConfigName|MainProjectName|ConfigName|ToolchainName|ProjectName|ArtifactNameBase|ArtifactName)(?=\\))"
+            },
+            {
+                "name": "variable.language.directory.bake",
+                "match": "(MainProjectDir|ProjectDir|OutputDir|Roots)(?=\\))"
+            },
+            {
+                "name": "variable.language.path.bake",
+                "match": "(CPPPath|CPath|ASMPath|ArchiverPath|LinkerPath)(?=\\))"
+            },
+            {
+                "name": "variable.language.util.bake",
+                "match": "(Uid|FilterArguments|Time|Hostname|QacActive)(?=\\))"
+            }]
+        }
+    }
+}

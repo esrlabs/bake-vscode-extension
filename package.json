@@ -29,6 +29,13 @@
                 "configuration": "./language-configuration.json"
             }
         ],
+        "grammars": [
+            {
+                "language": "bake",
+                "scopeName": "source.bake",
+                "path": "./syntaxes/bake.tmLanguage.json"
+            }
+        ],
         "commands": [
             {
                 "command": "bake.setIncludesToTarget",
