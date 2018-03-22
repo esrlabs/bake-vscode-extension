@@ -2,56 +2,77 @@
     "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
     "scopeName": "source.bake",
     "patterns":[{
-        "include": "#keywords"
+        "include": "#project"
     },
     {
-        "include": "#strings"
+        "include": "#adapt"
     },
     {
-        "include": "#comments"
+        "include": "#comment"
     }],
     "repository": {
-        "comments": {
-            "patterns": [{
-                "name": "comment.line.bake",
-                "match": "#.*"
+        "adapt": {
+            "begin": "\\b(Adapt|If|Unless)\\b(.*){",
+            "end": "}",
+            "beginCaptures": {
+                "1": { "name":"keyword.other.adapt.bake" },
+                "2": { "patterns": [{ "include": "#adapt_attribute" }] }
+            },
+            "patterns":[
+                { "include": "#executable_configuration" },
+                { "include": "#library_configuration" },
+                { "include": "#custom_configuration" }
+            ]
+        },
+        "adapt_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(toolchain|os):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": { "1": { "name":"keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } }
+            },
+            {
+                "match": "\\b(mainProject):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": { "1": { "name":"keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_module" }] } }
+            },
+            {
+                "match": "\\b(mainConfig):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": { "1": { "name":"keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_config" }] } }
             }]
         },
-        "keywords": {
-            "patterns": [{
-                "name": "keyword.config.bake",
-                "match": "\\b(CustomConfig|LibraryConfig|ExecutableConfig)\\b"
+        "archiver": {
+            "begin": "\\b(Archiver)(.*){",
+            "end": "}",
+            "beginCaptures": {
+                "1": { "name":"keyword.other.section.bake" },
+                "2": { "patterns": [{ "include": "#archiver_attribute" }] }
             },
+            "patterns":[
+                { "include": "#flags" },
+                { "include": "#comment" }
+            ]
+        },
+        "archiver_attribute": {
+            "patterns": [
             {
-                "name": "keyword.steps.bake",
-                "match": "\\b(StartupSteps|PreSteps|PostSteps)\\b"
-            },
-            {
-                "name": "keyword.files.bake",
-                "match": "\\b(Files|ExcludeFiles|IncludeDir)\\b"
-            },
-            {
-                "name": "keyword.dependency.bake",
-                "match": "\\b(UserLibrary|Dependency)\\b"
+                "match": "\\b(command|prefix):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } }
             }]
         },
-        "strings": {
-            "name": "string.quoted.double.bake",
-            "begin": "\"",
-            "end": "\"",
-            "patterns": [{
-                "name": "constant.character.escape.bake",
-                "match": "\\\\."
-            },
-            {
-                "include": "#bake_variables"
-            }]
+        "artifact_name": {
+            "match": "\\b(ArtifactName)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))",
+            "captures": { "1": { "name": "keyword.other.files.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
+            "patterns": []
         },
         "bake_variables": {
             "name": "variable.name.bake",
             "begin": "\\$\\(",
             "end": "\\)",
-            "patterns": [{
+            "patterns": [
+            {
+                "name": "variable.language.name.bake",
+                "match": "(__MAIN__|__ALL__|__THIS__)(?=\\))"
+            },
+            {
                 "name": "variable.language.name.bake",
                 "match": "(MainConfigName|MainProjectName|ConfigName|ToolchainName|ProjectName|ArtifactNameBase|ArtifactName)(?=\\))"
             },
@@ -67,6 +88,553 @@
                 "name": "variable.language.util.bake",
                 "match": "(Uid|FilterArguments|Time|Hostname|QacActive)(?=\\))"
             }]
+        },
+        "base_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(filter):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } }
+            },
+            {
+                "match": "\\b(default):\\s*(on|off)?",
+                "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "name": "constant.language.onoff.bake" } }
+            }]
+        },
+        "base_configuration_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(extends):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": { "1": { "name":"keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_config" }] } }
+            },
+            {
+                "match": "\\b(type):\\s*(replace|remove|extend|push_front)",
+                "captures": { "1": { "name":"keyword.other.attribute.bake" }, "2": { "name": "constant.language.type.bake" } }
+            },
+            {
+                "match": "\\b(private):\\s*([\\w]*)",
+                "captures": { "1": { "name":"keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#boolean" }] } }
+            }]
+        },
+        "base_configuration_content": {
+            "patterns":[
+                { "include": "#description" },
+                { "include": "#standard_steps" },
+                { "include": "#base_element" },
+                { "include": "#default_toolchain" },
+                { "include": "#toolchain" },
+                { "include": "#set" },
+                { "include": "#prebuild" },
+                { "include": "#comment" }
+            ]
+        },
+        "base_element": {
+            "patterns":[
+                { "include": "#include_dir" },
+                { "include": "#external_library" },
+                { "include": "#external_library_search_path" },
+                { "include": "#user_library" },
+                { "include": "#dependency" }
+            ]
+        },
+        "boolean": {
+            "patterns": [{ "name": "constant.language.boolean.bake", "match": "false|true" }]
+        },
+        "build_configuration_content": {
+            "patterns":[
+                { "include": "#files" },
+                { "include": "#exclude_files" },
+                { "include": "#artifact_name" }
+            ]
+        },
+        "compiler": {
+            "begin": "\\b(Compiler)\\b\\s*((ASM|CPP|C)\\b)?(.*){",
+            "end": "}",
+            "beginCaptures": {
+                "1": { "name":"keyword.other.section.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] },
+                "4": { "patterns": [{ "include": "#compiler_attribute" }] }
+            },
+            "patterns":[
+                { "include": "#flags" },
+                { "include": "#define" },
+                { "include": "#internal_defines" },
+                { "include": "#src_file_endings" },
+                { "include": "#comment" }
+            ]
+        },
+        "compiler_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(command|prefix):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } }
+            }]
+        },
+        "command_line": {
+            "match": "\\b(CommandLine)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": {
+                "1": { "name": "keyword.other.command.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] },
+                "5": { "patterns": [{ "include": "#command_attribute" }, { "include": "#base_attribute" }] }
+            },
+            "patterns": []
+        },
+        "command_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(echo):\\s*(on|off)?",
+                "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "name": "constant.language.onoff.bake" } }
+            },
+            {
+                "match": "\\b(independent):\\s*([\\w]*)",
+                "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#boolean" }] } }
+            }]
+        },
+        "comment": {
+            "patterns": [{ "name": "comment.line.bake", "match": "#.*" }]
+        },
+        "custom_configuration": {
+            "begin": "\\b(CustomConfig)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))(.*){",
+            "end": "}",
+            "beginCaptures": {
+                "1": { "name":"keyword.other.section.bake" },
+                "2": { "patterns": [{ "include": "#string_or_config" }] },
+                "5": { "patterns": [{ "include": "#base_configuration_attribute" }] }
+            },
+            "patterns":[
+                { "include": "#base_configuration_content" },
+                { "include": "#command_line" },
+                { "include": "#makefile" }
+            ]
+        },
+        "default_toolchain": {
+            "begin": "\\b(DefaultToolchain)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))(.*){",
+            "end": "}",
+            "beginCaptures": {
+                "1": { "name":"keyword.other.section.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] },
+                "5": { "patterns": [{ "include": "#default_toolchain_attribute" }] }
+            },
+            "patterns":[
+                { "include": "#compiler" },
+                { "include": "#archiver" },
+                { "include": "#linker" },
+                { "include": "#internal_includes" },
+                { "include": "#docu" },
+                { "include": "#comment" }
+            ]
+        },
+        "default_toolchain_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(outputDir):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": {"1": { "name": "keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } }
+            },
+            {
+                "match": "\\b(eclipseOrder|keepObjFileEndings):\\s*([\\w]*)",
+                "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#boolean" }] } }
+            }]
+        },
+        "define": {
+            "match": "\\b(Define)\\b\\s*((\".*?[^\\\\]\")|(\\w*))",
+            "captures": {
+                "1": { "name": "keyword.other.entry.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] }
+            },
+            "patterns": []
+        },
+        "dependency": {
+            "match": "\\b(Dependency)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": {
+                "1": { "name": "keyword.other.entry.bake" },
+                "2": { "patterns": [{ "include": "#string_or_module" }] },
+                "5": { "patterns": [{ "include": "#dependency_attribute" }] }
+            },
+            "patterns": []
+        },
+        "dependency_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(config):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": {"1": { "name": "keyword.other.libstuff.bake" }, "2": { "patterns": [{ "include": "#string_or_config" }] } }
+            },
+            {
+                "match": "\\b(inject|infix):\\s*(front|back)?",
+                "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "name": "constant.language.inject.bake" } }
+            },
+            {
+                "match": "\\b(system):\\s*([\\w]*)",
+                "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#boolean" }] } }
+            }]
+        },
+        "description": {
+            "match": "\\b(Description)\\b\\s(\".*?[^\\\\]\")?",
+            "captures": {
+                "1": { "name": "keyword.other.entry.bake" },
+                "2": { "patterns": [{ "include": "#string" }] }
+            },
+            "patterns": []
+        },
+        "docu": {
+            "match": "\\b(Docu)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))",
+            "captures": {"1": { "name": "keyword.other.entry.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
+            "patterns": []
+        },
+        "except": {
+            "match": "\\b(Except)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": {
+                "1": { "name": "keyword.other.entry.bake" },
+                "2": { "patterns": [{ "include": "#string_or_module" }] },
+                "5": { "patterns": [{ "include": "#except_attribute" }] }
+            },
+            "patterns": []
+        },
+        "except_attribute": {
+            "match": "\\b(config):\\s*((\".*?[^\\\\]\")|(\\w*))",
+            "captures": { "1": { "name":"keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_config" }] } },
+            "patterns": []
+        },
+        "exclude_files": {
+            "match": "\\b(ExcludeFiles)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": { "1": { "name": "keyword.other.entry.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
+            "patterns": []
+        },
+        "executable_configuration": {
+            "begin": "\\b(ExecutableConfig)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))(.*){",
+            "end": "}",
+            "beginCaptures": {
+                "1": { "name":"keyword.other.execonfig.bake" },
+                "2": { "patterns": [{ "include": "#string_or_config" }] },
+                "5": { "patterns": [{ "include": "#base_configuration_attribute" }] }
+            },
+            "patterns":[
+                { "include": "#base_configuration_content" },
+                { "include": "#build_configuration_content" },
+                { "include": "#linker_script" },
+                { "include": "#map_file" }
+            ]
+        },
+        "external_library": {
+            "match": "\\b(ExternalLibrary)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": {
+                "1": { "name": "keyword.other.entry.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] },
+                "3": { "patterns": [{ "include": "#external_library_attribute" }] }
+            },
+            "patterns": []
+        },
+        "external_library_attribute": {
+            "match": "\\b(search):\\s*([\\w]*)",
+            "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#boolean" }] } },
+            "patterns": []
+        },
+        "external_library_search_path": {
+            "match": "\\b(ExternalLibrarySearchPath)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))",
+            "captures": {"1": { "name": "keyword.other.entry.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
+            "patterns": []
+        },
+        "files": {
+            "patterns":[
+                { "include": "#files_block" },
+                { "include": "#files_single_line" }
+            ]
+        },
+        "files_single_line": {
+            "match": "\\b(Files)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))",
+            "captures": { "1": { "name": "keyword.other.entry.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
+            "patterns": []
+        },
+        "files_block": {
+            "begin": "\\b(Files)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))(.*){",
+            "end": "}",
+            "beginCaptures": { "1": { "name":"keyword.other.section.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
+            "patterns":[
+                { "include": "#define" },
+                { "include": "#flags" }
+            ]
+        },
+        "flags": {
+            "match": "\\b(Flags|LibPrefixFlags|LibPostfixFlags)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": {
+                "1": { "name": "keyword.other.entry.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] },
+                "5": { "patterns": [{ "include": "#flags_attribute" }] }
+            },
+            "patterns": []
+        },
+        "flags_attribute": {
+            "match": "\\b(add|remove):\\s*((\".*?[^\\\\]\")|(\\w*))?",
+            "captures": { "1": { "name":"keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
+            "patterns": []
+        },
+        "internal_defines": {
+            "match": "\\b(InternalDefines)\\b\\s*((\".*?[^\\\\]\")|(\\w*))",
+            "captures": { "1": { "name": "keyword.other.entry.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] }
+            },
+            "patterns": []
+        },
+        "internal_includes": {
+            "match": "\\b(InternalIncludes)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))",
+            "captures": {"1": { "name": "keyword.other.entry.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
+            "patterns": []
+        },
+        "library_configuration": {
+            "begin": "\\b(LibraryConfig)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))(.*){",
+            "end": "}",
+            "beginCaptures": {
+                "1": { "name":"keyword.other.section.bake" },
+                "2": { "patterns": [{ "include": "#string_or_config" }] },
+                "5": { "patterns": [{ "include": "#base_configuration_attribute" }] }
+            },
+            "patterns":[
+                { "include": "#base_configuration_content" },
+                { "include": "#build_configuration_content" }
+            ]
+        },
+        "linker": {
+            "begin": "\\b(Linker)(.*){",
+            "end": "}",
+            "beginCaptures": {
+                "1": { "name":"keyword.other.section.bake" },
+                "2": { "patterns": [{ "include": "#linker_attribute" }] }
+            },
+            "patterns":[
+                { "include": "#flags" },
+                { "include": "#comment" }
+            ]
+        },
+        "linker_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(command|prefix):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } }
+            },
+            {
+                "match": "\\b(onlyDirectDeps):\\s*([\\w]*)",
+                "captures": { "1": { "name":"keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#boolean" }] } }
+            }]
+        },
+        "linker_script": {
+            "match": "\\b(LinkerScript)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))",
+            "captures": { "1": { "name": "keyword.other.entry.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
+            "patterns": []
+        },
+        "include_dir": {
+            "match": "\\b(IncludeDir)\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": {
+                "1": { "name": "keyword.other.entry.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] },
+                "5": { "patterns": [{ "include": "#include_dir_attribute" }] }
+            },
+            "patterns": []
+        },
+        "include_dir_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(inject|infix):\\s*(front|back)?",
+                "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "name": "constant.language.inject.bake" } }
+            },
+            {
+                "match": "\\b(inherit|system):\\s*([\\w]*)",
+                "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#boolean" }] } }
+            }]
+        },
+        "project": {
+            "begin": "\\b(Project)\\b(.*){",
+            "end": "}",
+            "beginCaptures": {
+                "1": { "name":"keyword.other.project.bake" },
+                "2": { "patterns": [{ "include": "#project_attribute" }] }
+            },
+            "patterns":[
+                { "include": "#comment" },
+                { "include": "#description" },
+                { "include": "#required_bake_version" },
+                { "include": "#responsible" },
+                { "include": "#executable_configuration" },
+                { "include": "#library_configuration" },
+                { "include": "#custom_configuration" }
+            ]
+        },
+        "project_attribute": {
+            "match": "\\b(default):\\s*((\".*?[^\\\\]\")|(\\w*))?",
+            "captures": { "1": { "name":"keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_config" }] } },
+            "patterns": []
+        },
+        "person": {
+            "match": "\\b(Person)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": {
+                "1": { "name": "keyword.other.entry.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] },
+                "5": { "patterns": [{ "include": "#person_attribute" }] }
+            },
+            "patterns": []
+        },
+        "person_attribute": {
+            "match": "\\b(email):\\s*((\".*?[^\\\\]\")|(\\w*))?",
+            "captures": { "1": { "name":"keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
+            "patterns": []
+        },
+        "prebuild": {
+            "begin": "\\b(Prebuild)\\b.*{",
+            "end": "}",
+            "beginCaptures": { "1": { "name": "keyword.other.section.bake" } },
+            "patterns":[
+                { "include": "#except" }
+            ]
+        },
+        "makefile": {
+            "patterns":[
+                { "include": "#makefile_block" },
+                { "include": "#makefile_single_line" }
+            ]
+        },
+        "makefile_block": {
+            "begin": "\\b(Makefile)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))(.*){",
+            "end": "}",
+            "beginCaptures": {
+                "1": { "name": "keyword.other.section.bake" },
+                "2": { "patterns": [ { "include": "#string_or_value" }] },
+                "5": { "patterns": [ { "include": "#makefile_attribute" }, { "include": "#command_attribute" }, { "include": "#base_attribute" }] }
+            },
+            "patterns":[
+                { "include": "#flags" },
+                { "include": "#comment" }
+            ]
+        },
+        "makefile_single_line": {
+            "match": "\\b(Makefile)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": {
+                "1": { "name": "keyword.other.entry.bake" },
+                "2": { "patterns": [ { "include": "#string_or_value" }] },
+                "5": { "patterns": [ { "include": "#makefile_attribute" }, { "include": "#command_attribute" }, { "include": "#base_attribute" }] }
+            },
+            "patterns": []
+        },
+        "makefile_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(lib|target|pathTo):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } }
+            },
+            {
+                "match": "\\b(validExitCodes):\\s*((\".*?[^\\\\]\")|(\\[.*?\\]))?",
+                "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_array" }] } }
+            }]
+        },
+        "map_file": {
+            "match": "\\b(MapFile)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": { "1": { "name": "keyword.other.entry.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
+            "patterns": []
+        },
+        "responsible": {
+            "begin": "\\b(Responsible)\\b\\s*{",
+            "end": "}",
+            "beginCaptures": { "1": { "name": "keyword.other.section.bake" } },
+            "patterns":[{ "include": "#person" }]
+        },
+        "required_bake_version": {
+            "match": "\\b(RequiredBakeVersion)\\b\\s*([^#]*)",
+            "captures": { "1": { "name": "keyword.other.section.bake" }, "2": { "patterns": [{ "include": "#required_bake_version_attribute" }] } },
+            "patterns": []
+        },
+        "required_bake_version_attribute": {
+            "match": "\\b(minimum|maximum):\\s*(\"[0-9\\.]*\")",
+            "captures": { "1": { "name":"keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#string" }] } },
+            "patterns": []
+        },
+        "set": {
+            "match": "\\b(Set)\\b\\s*(\\w*\\b(?!:))?([^#]*)",
+            "captures": {
+                "1": { "name": "keyword.other.entry.bake" },
+                "2": { "name": "variable.other.readwrite.bake" },
+                "3": { "patterns": [{ "include": "#set_attribute" }] }
+            },
+            "patterns": []
+        },
+        "set_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(value|cmd):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": {"1": { "name": "keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } }
+            },
+            {
+                "match": "\\b(env):\\s*([\\w]*)",
+                "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#boolean" }] } }
+            }]
+        },
+        "src_file_endings": {
+            "match": "\\b(SrcFileEndings)\\b\\s*((\".*?[^\\\\]\")|(\\w*))",
+            "captures": {
+                "1": { "name": "keyword.other.entry.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] }
+            },
+            "patterns": []
+        },
+        "standard_steps": {
+            "begin": "\\b(PreSteps|PostSteps|ExitSteps|CleanSteps|StartupSteps)\\s*{",
+            "end": "}",
+            "beginCaptures": { "1": { "name": "keyword.other.steps.bake" } },
+            "patterns":[
+                { "include": "#command_line" },
+                { "include": "#makefile" },
+                { "include": "#comment" }
+            ]
+        },
+        "string": {
+            "name": "string.quoted.double.bake",
+            "begin": "\"",
+            "end": "[^\\\\]\"",
+            "patterns": [
+                { "name": "constant.character.escape.bake", "match": "\\\\." },
+                { "include": "#bake_variables" }
+            ]
+        },
+        "string_or_config": {
+            "patterns":[
+                { "include": "#string" },
+                { "name": "entity.name.type.config.bake", "match": "[A-Za-z0-9_]+" }]
+        },
+        "string_or_module": {
+            "patterns":[
+                { "include": "#string" },
+                { "name": "entity.name.type.module.bake", "match": "[A-Za-z0-9_]+" }]
+        },
+        "string_or_value": {
+            "patterns":[
+                { "include": "#string" },
+                { "name": "variable.other.constant.bake", "match": "[A-Za-z0-9_]+" }]
+        },
+        "string_or_array": {
+            "patterns":[
+                { "include": "#string" },
+                { "name": "variable.other.constant.bake", "match": "\\[[0-9, ]*\\]" }]
+        },
+        "toolchain": {
+            "begin": "\\b(Toolchain)\\b\\s*(.*){",
+            "end": "}",
+            "beginCaptures": {
+                "1": { "name":"keyword.other.section.bake" },
+                "2": { "patterns": [{ "include": "#toolchain_attribute" }] }
+            },
+            "patterns":[
+                { "include": "#compiler" },
+                { "include": "#archiver" },
+                { "include": "#linker" },
+                { "include": "#docu" },
+                { "include": "#comment" }
+            ]
+        },
+        "toolchain_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(outputDir):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": {"1": { "name": "keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } }
+            }]
+        },
+        "user_library": {
+            "match": "\\b(UserLibrary)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))",
+            "captures": {"1": { "name": "keyword.other.entry.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
+            "patterns": []
         }
     }
 }
