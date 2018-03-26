@@ -18,16 +18,6 @@ export class BakeConfiguration{
 
     constructor(){
         this.config = vscode.workspace.getConfiguration('bake');
-
-        if (this.config.has("mainProject")){
-            vscode.window.showWarningMessage("bake: setting bake.mainProject is deprecated. Search for project targets wiht 'ctrl+p'.");
-        }
-        if (this.config.has("targetConfig")){
-            vscode.window.showWarningMessage("bake: setting bake.targetConfig is deprecated. Search for project targets wiht 'ctrl+p'.");
-        }
-        if (this.config.has("buildVariants")){
-            vscode.window.showWarningMessage("bake: setting bake.buildVariants is deprecated. Search for project targets wiht 'ctrl+p'.");
-        }
     }
 
     createConfigurationVariant(project: BakeFile, target: string): ConfigurationVariant {

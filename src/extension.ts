@@ -16,8 +16,6 @@ let bakeTaskProvider: vscode.Disposable | undefined;
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-    logger.info('Project.meta file(s) detected. Activating bake extension.');
-
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
@@ -42,11 +40,27 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable);
 
     bakeTaskProvider = registerBakeTasks(context);
+
+    warnOnDeprecated()
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {
     if (bakeTaskProvider) {
         bakeTaskProvider.dispose();
+    }
+}
+
+function warnOnDeprecated() {
+    let config = vscode.workspace.getConfiguration('bake')
+
+    if (config.has("mainProject")){
+        vscode.window.showWarningMessage("bake: setting bake.mainProject is deprecated. Search for project targets wiht 'ctrl+shift+p'.");
+    }
+    if (config.has("targetConfig")){
+        vscode.window.showWarningMessage("bake: setting bake.targetConfig is deprecated. Search for project targets wiht 'ctrl+shift+p'.");
+    }
+    if (config.has("buildVariants")){
+        vscode.window.showWarningMessage("bake: setting bake.buildVariants is deprecated. Search for project targets wiht 'ctrl+shift+p'.");
     }
 }
