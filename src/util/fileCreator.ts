@@ -5,11 +5,10 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as doT from 'dot';
+import { globalState } from '../model/GlobalState';
 
 doT.templateSettings.strip = false;
 doT.templateSettings.varname = 'file';
-
-const globalAny:any = global;
 
 const WORKSPACE_INCLUDE_PREFIX = '${workspaceRoot}/';
 
@@ -61,13 +60,9 @@ function splitBySeperator(p) : string[] {
 }
 
 function findMatchingIncludePath(folder: string) : string {
-    if (!globalAny.bake || !globalAny.bake.includes){
-        return "";
-    }
-
-    let includes : string[] = globalAny.bake.includes;
+    let includes = globalState().getIncludes();
     if (includes.length == 0){
-        return "";        
+        return "";
     }
 
     includes = includes.filter(p => p.startsWith(WORKSPACE_INCLUDE_PREFIX));

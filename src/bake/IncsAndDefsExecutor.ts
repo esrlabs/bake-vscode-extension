@@ -1,19 +1,25 @@
 import BakeExecutor from '../bake/BakeExecutor';
-import BakeConfiguration from '../settings/BakeConfiguration'
-import * as jsonfile from 'jsonfile';
+import BakeExtensionSettings from '../settings/BakeExtensionSettings'
 import * as vscode from 'vscode';
 import * as path from 'path';
 import logger from '../util/logger';
 
-interface WorkspaceUpdate {
+interface IncludesAndDefines {
     includes: string[];
     defines: string[];
 }
 
 const WORKSPACE_INCLUDE_PREFIX = '${workspaceRoot}';
+const BAKE_ERROR_MESSAGE = 
+"Failed to execute bake. This can have many reasons. E.g:\n\
+- do you have an up-to-date version of bake installed?\n\
+- does your build setup define toolchains with adapts? If so try to setup a build variant in the vscode settings including an adapt property\n\
+- are your dependencies in the Project.meta properly defined? Try to invoke bake without --incs-and-defs";
 
 /**
  * Runs bake with --incs-and-defs=json parameter
+ * and parses the output privding
+ * the includes and defines
  */
 class IncsAndDefsExecutor{
 
@@ -26,12 +32,13 @@ class IncsAndDefsExecutor{
     /**
      * @param project the -m switch value given to bake
      * @param config the config to determine the incs-and-defs for
+     * @param adapt and optional adapt string
      * @return Promise resolved with an object {includes: string[], defines: [string] }
      */
-    execute(project: string, config: string): Promise<WorkspaceUpdate>{
-        let configuration = new BakeConfiguration()
+    execute(project: string, config: string, adapts: string): Promise<IncludesAndDefines>{
+        let configuration = new BakeExtensionSettings()
         let adaptCompiler = configuration.getUnitTestAdaptType()
-        let doAdapt = (config.toLowerCase().includes("unittest") && adaptCompiler)? `--adapt ${adaptCompiler} ` : ""
+        let doAdapt = adapts ? `--adapt ${adapts} ` : (config.toLowerCase().includes("unittest") && adaptCompiler)? `--adapt ${adaptCompiler} ` : ""
         let bakeExecutor = new BakeExecutor(this.workspaceFolder);
 
         logger.info(` Reading bake config for build variant project=${project} config=${config}`);
@@ -44,11 +51,11 @@ class IncsAndDefsExecutor{
             })
             .catch((error) => {
                 logger.error(error);
-                throw new Error("failed to execute bake. is a recent version of bake installed?");
+                throw new Error(BAKE_ERROR_MESSAGE);
             });
     }
 
-    private parseOutput(output: string) : Promise<WorkspaceUpdate>{
+    private parseOutput(output: string) : Promise<IncludesAndDefines>{
         return new Promise((resolve, reject)=>{
             try {
                 let bakeOutputAsObj = JSON.parse(output);

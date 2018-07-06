@@ -1,75 +1,55 @@
 import IncsAndDefsExecutor from "../bake/IncsAndDefsExecutor";
-import {BakeConfiguration, ConfigurationVariant} from "../settings/BakeConfiguration";
+import {BuildVariant} from "../model/BuildVariant";
 import CppConfigFile from '../intellisense/CppConfigFile';
 import logger from '../util/logger';
-
-import * as vscode from 'vscode'
-
-const globalAny:any = global;
-
-const WORKSPACE_INCLUDE_PREFIX = '${workspaceRoot}';
+import * as util from 'util'
+import { globalState } from "../model/GlobalState";
 
 class IncsAndDefsImporter{
 
     private incsAndDefsExecutor: IncsAndDefsExecutor;
     private workspaceFolder;
+    private cppConfigFile: CppConfigFile;
 
     constructor(workspaceFolder){
         this.workspaceFolder= workspaceFolder;
         this.incsAndDefsExecutor = new IncsAndDefsExecutor(workspaceFolder);
+        this.cppConfigFile = new CppConfigFile(workspaceFolder);
     }
 
-    import(buildVariant : ConfigurationVariant){
-        let update = this.incsAndDefsExecutor.execute(buildVariant.project, buildVariant.config)
+    async importAll(buildVariants : BuildVariant[]){
+        logger.info(`Importing ${util.inspect(buildVariants)} exclusivly`)
+
+        this.cppConfigFile.cleanImportsAndDefines();
+
+        for (let i = 0; i < buildVariants.length; ++i){
+            await this.addImport(buildVariants[i]);
+        }
+    }
+
+    async importExclusively(buildVariant : BuildVariant){
+        logger.info(`Importing ${util.inspect(buildVariant)} exclusivly`)
+        let update = this.incsAndDefsExecutor.execute(buildVariant.project, buildVariant.config, buildVariant.adapt)
         return update.then(result =>{
-            return this.write(result.includes, result.defines);
+            this.cppConfigFile.cleanImportsAndDefines();
+            this.cppConfigFile.addImportsAndDefines(result.includes, result.defines);
+            globalState().clear();
+            globalState().addIncludes(result.includes)
+            globalState().addBuildVariant(buildVariant);
         });
     }
 
-    addImport(buildVariant : ConfigurationVariant){
-        let update = this.incsAndDefsExecutor.execute(buildVariant.project, buildVariant.config)
+    async addImport(buildVariant : BuildVariant){
+        logger.info(`Importing ${util.inspect(buildVariant)}`)
+        let update = this.incsAndDefsExecutor.execute(buildVariant.project, buildVariant.config, buildVariant.adapt)
         return update.then(result =>{
-            return this.write(result.includes, result.defines, false);
+            this.cppConfigFile.addImportsAndDefines(result.includes, result.defines);
+            globalState().addIncludes(result.includes)
+            globalState().addBuildVariant(buildVariant);
         });
     }
 
-    private write(collectedIncludes, collectedDefines, overwrite = true) : Promise<void>{
-        let cppConfigFile = new CppConfigFile(this.workspaceFolder);
-        let cppConfig = cppConfigFile.read();
-
-        globalAny.bake = {includes: collectedIncludes}; //memorize globally to allow namespace heuristic for new .h/.cpp files
-
-        cppConfig.configurations.forEach(element => {
-            //set includes
-            let includePaths: string[] = element.includePath
-            let existingIncludePaths: string[] = includePaths
-
-            if (overwrite) {
-                // Only keep the ones outside the workspace
-                existingIncludePaths = includePaths.filter((include) => !include.startsWith(WORKSPACE_INCLUDE_PREFIX));
-            }
-            // Make sure workspace paths all have same format
-            collectedIncludes = collectedIncludes.map(p => p.replace(/\\/g, "/"))
-            let newIncludePaths : Set<string> = new Set(collectedIncludes); //assure each entry is unique
-            existingIncludePaths.forEach( e => newIncludePaths.add(e) )
-            element.includePath = Array.from(newIncludePaths)
-
-            //set defines
-            let defines = new Set()
-            if(!overwrite) {
-                element.defines.forEach(element => {
-                    defines.add(element)
-                })
-            }
-            collectedDefines.forEach(element => {
-                defines.add(element);
-            });
-            element.defines = Array.from(defines)
-        });
-        cppConfigFile.write(cppConfig);
-
-        return Promise.resolve();
-    }
+    
 }
 
 export default IncsAndDefsImporter;

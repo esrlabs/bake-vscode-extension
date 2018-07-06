@@ -24,7 +24,7 @@
                     "Bake"
                 ],
                 "extensions": [
-                    "Project.meta"
+                    "Project.meta", "Adapt.meta"
                 ],
                 "configuration": "./language-configuration.json"
             }
@@ -38,22 +38,20 @@
         ],
         "commands": [
             {
-                "command": "bake.setIncludesToTarget",
-                "title": "Set target as include paths",
-                "category": "Bake"
-            },
-            {
-                "command": "bake.addTargetToIncludes",
-                "title": "Add target include to existing paths",
-                "category": "Bake"
-            },
-            {
                 "command": "bake.createNewHeaderFile",
                 "title": "New .h File"
             },
             {
                 "command": "bake.createNewCppFile",
                 "title": "New .cpp File"
+            },
+            {
+                "command": "bake.importIncludesAndDefines",
+                "title": "Import C++ Includes and Defines from Bake"
+            },
+            {
+                "command": "bake.cleanIncludesAndDefines",
+                "title": "Clean imported C++ Includes and Defines from Bake"
             }
         ],
         "configuration": {
@@ -79,6 +77,18 @@
                     "type": "string",
                     "default": "$gcc",
                     "description": "Problem matcher for build output."
+                },
+                "bake.buildVariants": {
+                    "type": "object",
+                    "default": {
+                        "ExampleVariant": {
+                            "project": "Spaceship3",
+                            "config": "arm-x64",
+                            "adapt": "host,unittest",
+                            "default": "true"
+                        }
+                    },
+                    "description": "list build variants (project/config combinations) you want to use to generate imports and defines from"
                 }
             }
         },
