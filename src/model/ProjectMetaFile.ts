@@ -1,72 +1,72 @@
-import * as vscode from 'vscode'
-import logger from '../util/logger'
+import * as vscode from "vscode";
+import logger from "../util/logger";
 
 /**
  * Represents a Project.meta file in a BakeWorkspace
  */
 export class ProjectMetaFile {
 
-    private path = require('path')
-    private filePath
+    private path = require("path");
+    private filePath;
 
     constructor(filePath: string) {
-        this.filePath = filePath.replace(/\\/g, "/")
+        this.filePath = filePath.replace(/\\/g, "/");
     }
 
-    getName(): string {
-        let directoryPath = this.getFolderPath()
-        return this.path.basename(directoryPath)
+    public getName(): string {
+        const directoryPath = this.getFolderPath();
+        return this.path.basename(directoryPath);
     }
 
-    getFilePath(): string {
-        return this.filePath
+    public getFilePath(): string {
+        return this.filePath;
     }
 
-    getFolderPath(): string {
-        return this.path.dirname(this.filePath).replace(/\\/g, "/")
+    public getFolderPath(): string {
+        return this.path.dirname(this.filePath).replace(/\\/g, "/");
     }
 
-    getWorkspaceFolder(): vscode.WorkspaceFolder {
-        let normalizedProjectPath = this.path.normalize(this.getFolderPath())
-        for (let folder of vscode.workspace.workspaceFolders) {
-            let normalizedWorkspace = this.path.normalize(folder.uri.fsPath)
-            if (normalizedProjectPath.indexOf(normalizedWorkspace) == 0) {
-                return folder
+    public getWorkspaceFolder(): vscode.WorkspaceFolder {
+        const normalizedProjectPath = this.path.normalize(this.getFolderPath());
+        for (const folder of vscode.workspace.workspaceFolders) {
+            const normalizedWorkspace = this.path.normalize(folder.uri.fsPath);
+            if (normalizedProjectPath.indexOf(normalizedWorkspace) === 0) {
+                return folder;
             }
         }
-        return null
+        return null;
     }
 
-    getPathInWorkspace(): string {
-        let folder = this.getWorkspaceFolder()
-        let relativePath = this.path.relative(folder.uri.fsPath, this.getFolderPath())
+    public getPathInWorkspace(): string {
+        const folder = this.getWorkspaceFolder();
+        const relativePath = this.path.relative(folder.uri.fsPath, this.getFolderPath());
         // Convert to slashes...
-        return relativePath.replace(/\\/g, "/")
+        return relativePath.replace(/\\/g, "/");
     }
 
-    getTargets(): Thenable<string[]> {
-        let directory = this.getFolderPath()
+    public getTargets(): Thenable<string[]> {
+        const directory = this.getFolderPath();
         return vscode.workspace.openTextDocument(this.filePath)
-            .then(document => {
+            .then((document) => {
                 // Match all targets except those commented out
-                let re = /^[^#A-Za-z0-9]*(?:ExecutableConfig|LibraryConfig|CustomConfig)\s+(\w*)/
-                let matches = []
-                for (var l = 0; l < document.lineCount; ++l) {
-                    let line = document.lineAt(l)
-                    let match = line.text.match(re)
+                const re = /^[^#A-Za-z0-9]*(?:ExecutableConfig|LibraryConfig|CustomConfig)\s+(\w*)/;
+                const matches = [];
+                for (let l = 0; l < document.lineCount; ++l) {
+                    const line = document.lineAt(l);
+                    const match = line.text.match(re);
                     if (match) {
-                        matches.push(match[1])
+                        matches.push(match[1]);
                     }
                 }
-                if (matches.length == 0) {
-                    throw new Error(`Found no targets in bake Project.meta file ${this.getFilePath()}`)
+                if (matches.length === 0) {
+                    throw new Error(`Found no targets in bake Project.meta file ${this.getFilePath()}`);
                 } else {
-                    return matches
+                    return matches;
                 }
             }).then(null, (e) => {
-                logger.error(e.toString())
-                return []
-            })
+                logger.error(e.toString());
+                return [];
+            });
     }
 }
 

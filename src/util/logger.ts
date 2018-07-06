@@ -1,31 +1,31 @@
-'use strict';
+"use strict";
 
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-const NAME = 'bake';
+const NAME = "bake";
 
 /**
  * Pipes output to the debug console (host VSCode) AND
- * to the output window (to be able to see messages in the 
+ * to the output window (to be able to see messages in the
  * productive env).
  */
-class Logger{
+class Logger {
 
-    readonly _channel : vscode.OutputChannel;
+    public readonly channel: vscode.OutputChannel;
 
-    constructor(name){
-        this._channel = vscode.window.createOutputChannel(name);
+    constructor(name) {
+        this.channel = vscode.window.createOutputChannel(name);
     }
 
-    info(output){
-        this._channel.append(output + '\n');
+    public info(output) {
+        this.channel.append(output + "\n");
 //        this._channel.show(true);
         console.log(output);
     }
 
-    error(output){
-        this._channel.append(output + '\n');
-        this._channel.show(true);
+    public error(output) {
+        this.channel.append(output + "\n");
+        this.channel.show(true);
         console.error(output);
     }
 }

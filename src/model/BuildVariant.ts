@@ -1,9 +1,9 @@
-import ProjectMetaFile from './ProjectMetaFile'
+import ProjectMetaFile from "./ProjectMetaFile";
 
 /**
  * A BuildVariant describes all necessary parameters
  * to call bake for a distinct build.
- * 
+ *
  * Currently a build run is uniquly defined by
  * - project
  * - config
@@ -16,12 +16,12 @@ export interface BuildVariant {
 }
 
 export function createBuildVariantFrom(project: ProjectMetaFile, target: string): BuildVariant {
-    const relativePath = project.getPathInWorkspace()
-    let variant : BuildVariant = {
+    const relativePath = project.getPathInWorkspace();
+    const variant: BuildVariant = {
         project: relativePath,
         config: target,
-        adapt: null
+        adapt: null,
 
-    }
-    return variant
+    };
+    return variant;
 }
