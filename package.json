@@ -128,14 +128,13 @@
     "lint": "node_modules/tslint/bin/tslint -c tslint.json 'src/**/*.ts' --fix"
   },
   "devDependencies": {
-    "@types/mocha": "^2.2.42",
-    "@types/node": "^7.0.43",
+    "@types/mocha": "^5.2.4",
+    "@types/node": "^10.5.2",
     "tslint": "5.10.0",
-    "typescript": "^2.6.1",
-    "vscode": "^1.1.6"
+    "typescript": "^2.9.2",
+    "vscode": "^1.1.18"
   },
   "dependencies": {
-    "deepmerge": "^2.0.1",
     "dot": "^1.1.2",
     "jsonfile": "^4.0.0"
   }
