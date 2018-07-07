@@ -137,5 +137,9 @@
   "dependencies": {
     "dot": "^1.1.2",
     "jsonfile": "^4.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/esrlabs/bake-vscode-extension"
   }
 }
