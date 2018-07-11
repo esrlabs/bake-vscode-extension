@@ -102,22 +102,7 @@
           "command": "bake.createNewCppFile"
         }
       ]
-    },
-    "taskDefinitions": [
-      {
-        "type": "bake",
-        "properties": {
-          "target": {
-            "type": "string",
-            "description": "Target in Project.meta"
-          },
-          "file": {
-            "type": "string",
-            "description": "Project.meta file"
-          }
-        }
-      }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

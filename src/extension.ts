@@ -4,7 +4,8 @@
 import * as vscode from "vscode";
 import {cleanIncludesAndDefines} from "./commands/cleanIncludesAndDefines";
 import {doImportBuildVariantFromSettings, importIncludesAndDefines} from "./commands/importIncludesAndDefines";
-import {registerBakeTasks} from "./tasks/BuildTasks";
+import {registerAutoDetectedBakeTasks} from "./tasks/AutoDetectedBuildTasks";
+import {registerActiveBakeTasks} from "./tasks/ActiveBuildTasks";
 
 import newCppFile from "./commands/newCppFile";
 import newHeaderFile from "./commands/newHeaderFile";
@@ -12,7 +13,7 @@ import newHeaderFile from "./commands/newHeaderFile";
 import { BakeExtensionSettings } from "./settings/BakeExtensionSettings";
 import logger from "./util/logger";
 
-let bakeTaskProvider: vscode.Disposable | undefined;
+let bakeTaskProviders: vscode.Disposable[] = [];
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -40,7 +41,8 @@ export async function activate(cntxt: vscode.ExtensionContext) {
         cleanIncludesAndDefines(context);
     });
 
-    bakeTaskProvider = registerBakeTasks(cntxt);
+    bakeTaskProviders.push(registerActiveBakeTasks(cntxt));
+    bakeTaskProviders.push(registerAutoDetectedBakeTasks(cntxt));
 
     warnOnDeprecated();
 
@@ -66,9 +68,7 @@ async function importDefaultBuildVariant() {
 
 // this method is called when your extension is deactivated
 export function deactivate() {
-    if (bakeTaskProvider) {
-        bakeTaskProvider.dispose();
-    }
+    bakeTaskProviders.forEach(t => t.dispose());
 }
 
 function warnOnDeprecated() {
