@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
 import { createBuildVariantFrom } from "../model/BuildVariant";
 import { createBakeWorkspace } from "../model/Workspace";
-import { createBuildTask } from "./TasksCommon";
+import { createDynamicBuildTask } from "./TasksCommon";
+
 
 /**
  * Searches for build variants in the workspace
@@ -31,12 +32,11 @@ async function createBuildTasksFromAutoDetetectedBuildVariants(): Promise<vscode
     let workspace = await createBakeWorkspace();
 
     let buildTasks : vscode.Task[] = [];
-    for (const p of workspace.getProjectMetas()){
-        let targets = await p.getTargets();
-        for (const t of targets){
-            const buildVariant = createBuildVariantFrom(p,t);
-            const name = `auto-detected: Build project=${buildVariant.project} config=${buildVariant.config} ${buildVariant.adapt ? "adapt=" + buildVariant.adapt : ""}`;
-            buildTasks.push(createBuildTask(name, buildVariant));
+    for (const project of workspace.getProjectMetas()){
+        let targets = await project.getTargets();
+        for (const target of targets){
+            const buildVariant = createBuildVariantFrom(project, target);
+            buildTasks.push(createDynamicBuildTask(project, buildVariant));
         }
     }
 

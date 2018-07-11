@@ -58,11 +58,7 @@ export class ProjectMetaFile {
                         matches.push(match[1]);
                     }
                 }
-                if (matches.length === 0) {
-                    throw new Error(`Found no targets in bake Project.meta file ${this.getFilePath()}`);
-                } else {
-                    return matches;
-                }
+                return matches
             }).then(null, (e) => {
                 logger.error(e.toString());
                 return [];

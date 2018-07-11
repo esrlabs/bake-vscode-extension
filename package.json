@@ -40,19 +40,23 @@
     "commands": [
       {
         "command": "bake.createNewHeaderFile",
-        "title": "New .h File"
+        "title": "New .h File",
+        "category": "Bake"
       },
       {
         "command": "bake.createNewCppFile",
-        "title": "New .cpp File"
+        "title": "New .cpp File",
+        "category": "Bake"
       },
       {
         "command": "bake.importIncludesAndDefines",
-        "title": "Import C++ Includes and Defines from Bake"
+        "title": "Import C++ Includes and Defines from Bake",
+        "category": "Bake"
       },
       {
         "command": "bake.cleanIncludesAndDefines",
-        "title": "Clean imported C++ Includes and Defines from Bake"
+        "title": "Clean imported C++ Includes and Defines from Bake",
+        "category": "Bake"
       }
     ],
     "configuration": {
@@ -102,7 +106,16 @@
           "command": "bake.createNewCppFile"
         }
       ]
-    }
+    },
+    "taskDefinitions": [
+      {
+        "type": "bake",
+        "properties": {
+          "target": { "type": "string", "description": "Target in Project.meta" },
+          "file": { "type": "string", "description": "Project.meta file" }
+        }
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

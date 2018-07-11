@@ -3,6 +3,11 @@ import { BakeExtensionSettings } from "../settings/BakeExtensionSettings";
 import * as vscode from "vscode";
 import { globalState } from "../model/GlobalState";
 
+interface BakeTaskDefinition extends vscode.TaskDefinition {
+    target?: string;
+    file?: string;
+}
+
 export function createBuildTask(name: string, buildVariant: BuildVariant): vscode.Task {
     const settings = new BakeExtensionSettings();
     const problemMatcher = settings.getDefaultProblemMatcher();
@@ -20,6 +25,30 @@ export function createBuildTask(name: string, buildVariant: BuildVariant): vscod
         task.problemMatchers.push(problemMatcher);
     }
     return task;
+}
+
+export function createDynamicBuildTask(project, buildVariant: BuildVariant) : vscode.Task {
+    const settings = new BakeExtensionSettings();
+    const problemMatcher = settings.getDefaultProblemMatcher();
+    const commandLine = createBuildCommandLine(buildVariant, settings)
+    const path = project.getPathInWorkspace()
+    const projectName = project.getName()
+    let name = `'${buildVariant.config}', ${project.getName()}`
+    if (path != projectName) {
+        name = `${name} (${path})`
+    }
+    let kind: BakeTaskDefinition = {
+        type: "bake",
+        target: buildVariant.config,
+        file: path
+    }
+    let task = new vscode.Task(kind, project.getWorkspaceFolder(), name , "bake")
+    task.group = vscode.TaskGroup.Build
+    task.execution = new vscode.ShellExecution(commandLine)
+    if (problemMatcher) {
+        task.problemMatchers.push(problemMatcher)
+    }
+    return task
 }
 
 function createBuildCommandLine(buildVariant: BuildVariant, settings: BakeExtensionSettings ){
