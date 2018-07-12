@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { createBuildVariantFrom } from "../model/BuildVariant";
 import { createBakeWorkspace } from "../model/Workspace";
-import { createDynamicBuildTask } from "./TasksCommon";
+import { createBuildTask } from "./TasksCommon";
 
 
 /**
@@ -19,6 +19,7 @@ export function registerAutoDetectedBakeTasks(context: vscode.ExtensionContext) 
     return vscode.workspace.registerTaskProvider("bake", {
         provideTasks: (token?: vscode.CancellationToken) => {
             return createBuildTasksFromAutoDetetectedBuildVariants();
+            //return []
         },
         resolveTask(task: vscode.Task, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.Task> {
             // Refining tasks is not supported by VSCODE yet.
@@ -36,7 +37,11 @@ async function createBuildTasksFromAutoDetetectedBuildVariants(): Promise<vscode
         let targets = await project.getTargets();
         for (const target of targets){
             const buildVariant = createBuildVariantFrom(project, target);
-            buildTasks.push(createDynamicBuildTask(project, buildVariant));
+            const projectName = project.getName()
+            const name = (buildVariant.project === projectName)?
+                (`'${buildVariant.config}' in ${project.getName()}`) :
+                (`'${buildVariant.config}' in ${project.getName()} (${buildVariant.project})`)
+            buildTasks.push(createBuildTask(name, buildVariant, "Bake", project.getWorkspaceFolder()));
         }
     }
 

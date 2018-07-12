@@ -1,6 +1,6 @@
 import * as util from "util";
 import * as vscode from "vscode";
-import { globalState } from "../model/GlobalState";
+import BakeExtensionSettings from "../settings/BakeExtensionSettings";
 import logger from "../util/logger";
 import { createBuildTask } from "./TasksCommon";
 
@@ -29,13 +29,14 @@ export function registerActiveBakeTasks(context: vscode.ExtensionContext) {
 }
 
 function createBuildTasksOfActiveBuildVariants(): vscode.Task[] {
-    const activeBuildVariants = globalState().getBuildVariants();
+    const configuration = new BakeExtensionSettings();
+    const buildVariantsMap = configuration.getBuildVariants();
 
-    logger.info(`Active build variants to derive Tasks from:\n${util.inspect(activeBuildVariants)}`);
-
-    return activeBuildVariants.map((v) => {
-        const name = `active: Build project=${v.project} config=${v.config} ${v.adapt ? "adapt=" + v.adapt : ""}`;
-        return createBuildTask(name, v);
+    return Object.keys(buildVariantsMap).map((variantName) => {
+        const v = buildVariantsMap[variantName];
+        logger.info(`Build variant to derive Tasks from:\n${util.inspect(v)}`);
+        const name = `${variantName} -> '${v.config}' in ${v.project}`;
+        return createBuildTask(name, v, "Bake Variant");
     });
 }
 

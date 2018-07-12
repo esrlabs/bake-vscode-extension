@@ -73,6 +73,7 @@ export async function importIncludesAndDefines(context: vscode.ExtensionContext)
 
     try {
         if (selection.predefinedBuildVariant) {
+            vscode.window.setStatusBarMessage(`Start import of C++ Includes and Defines`, 5000);
             await doImportBuildVariantFromSettings(selection.label, selection.predefinedBuildVariant);
         } else {
             await doImportBySearch(context);

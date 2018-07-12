@@ -5,7 +5,7 @@ import * as vscode from "vscode";
 import {cleanIncludesAndDefines} from "./commands/cleanIncludesAndDefines";
 import {doImportBuildVariantFromSettings, importIncludesAndDefines} from "./commands/importIncludesAndDefines";
 import {registerAutoDetectedBakeTasks} from "./tasks/AutoDetectedBuildTasks";
-import {registerActiveBakeTasks} from "./tasks/ActiveBuildTasks";
+import {registerActiveBakeTasks} from "./tasks/VariantBuildTasks";
 
 import newCppFile from "./commands/newCppFile";
 import newHeaderFile from "./commands/newHeaderFile";
