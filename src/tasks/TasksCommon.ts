@@ -5,20 +5,17 @@ import { globalState } from "../model/GlobalState";
 
 // FIXME: the next line assumes that we are working with one workspace only (should be the case most of time)
 export function createBuildTask(name: string,
-                                buildVariant: BuildVariant,
-                                type: string,
-                                folder = globalState().getWorkspaceFolder()): vscode.Task {
+                                buildVariant: BuildVariant): vscode.Task {
     const settings = new BakeExtensionSettings();
     const problemMatcher = settings.getDefaultProblemMatcher();
     const commandLine = createBuildCommandLine(buildVariant, settings);
     const kind = {
-        label: name,
-        type: "shell",
-        command: commandLine
+        type: "bake",
+        project: buildVariant.project,
+        config: buildVariant.config
     };
-    const task = new vscode.Task(kind, folder, name , type);
+    const task = new vscode.Task(kind, vscode.TaskScope.Workspace, name, "bake", new vscode.ShellExecution(commandLine));
     task.group = vscode.TaskGroup.Build;
-    task.execution = new vscode.ShellExecution(commandLine);
     if (problemMatcher) {
         task.problemMatchers.push(problemMatcher);
     }

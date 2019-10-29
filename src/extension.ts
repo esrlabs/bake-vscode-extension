@@ -4,7 +4,7 @@
 import * as vscode from "vscode";
 import {cleanIncludesAndDefines} from "./commands/cleanIncludesAndDefines";
 import {doImportBuildVariantFromSettings, importIncludesAndDefines} from "./commands/importIncludesAndDefines";
-import {registerAutoDetectedBakeTasks} from "./tasks/AutoDetectedBuildTasks";
+import { BakeTaskProvider } from "./tasks/BakeTaskProvider";
 import {registerActiveBakeTasks} from "./tasks/VariantBuildTasks";
 
 import newCppFile from "./commands/newCppFile";
@@ -41,8 +41,10 @@ export async function activate(cntxt: vscode.ExtensionContext) {
         cleanIncludesAndDefines(context);
     });
 
+    let workspaceRoot = vscode.workspace.rootPath;
+
     bakeTaskProviders.push(registerActiveBakeTasks(cntxt));
-    bakeTaskProviders.push(registerAutoDetectedBakeTasks(cntxt));
+    bakeTaskProviders.push(vscode.workspace.registerTaskProvider(BakeTaskProvider.BakeType, new BakeTaskProvider(workspaceRoot)));
 
     warnOnDeprecated();
 
