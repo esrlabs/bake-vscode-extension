@@ -29,5 +29,6 @@ function createBuildCommandLine(buildVariant: BuildVariant, settings: BakeExtens
     const isUnittest = buildVariant.config.toLowerCase().includes("unittest");
     const doAdapt = buildVariant.adapt ? `--adapt ${buildVariant.adapt}` : (isUnittest && adaptCompiler) ? `--adapt ${adaptCompiler}` : "";
     const doRun =  (isUnittest && runTestsOnBuild) ? "--do run" : "";
-    return `bake -j${numCores} -m ${buildVariant.project} ${buildVariant.config} -a black ${doAdapt} ${doRun}`;
+    const project = (buildVariant.project === vscode.workspace.name || buildVariant.project === "") ? "." : buildVariant.project;
+    return `bake -j${numCores} -m ${project} ${buildVariant.config} -a black ${doAdapt} ${doRun}`;
 }
