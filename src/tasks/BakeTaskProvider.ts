@@ -41,7 +41,7 @@ export class BakeTaskProvider implements vscode.TaskProvider {
             const definition: BakeTaskDefinition = <any>task.definition;
             // handle corner case when the project is in the root workspace folder
             const pattern = (definition.project === "" || definition.project === vscode.workspace.name) ?
-                'Project.meta' : `'**/${definition.project}/Project.meta'`;
+                'Project.meta' : `**/${definition.project}/Project.meta`;
             return vscode.workspace.findFiles(pattern).then(async (uris) => {
                 if (!uris.length) {
                     return undefined;
