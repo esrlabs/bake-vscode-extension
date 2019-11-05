@@ -19,10 +19,26 @@
                 "2": { "patterns": [{ "include": "#adapt_attribute" }] }
             },
             "patterns":[
-                { "include": "#executable_configuration" },
-                { "include": "#library_configuration" },
-                { "include": "#custom_configuration" }
+                { "include": "#adapt_scope" },
+                { "include": "#adapt_executable_configuration" },
+                { "include": "#adapt_library_configuration" },
+                { "include": "#adapt_custom_configuration" }
             ]
+        },
+        "scope_attribute": {
+            "patterns": [{
+                "match": "\\b(value):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } }
+            }]
+        },
+        "adapt_scope": {
+            "match": "\\b(Scope)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": {
+                "1": { "name": "keyword.other.entry.bake" },
+                "2": { "patterns": [ { "include": "#string_or_value" }] },
+                "5": { "patterns": [ { "include": "#scope_attribute" }] }
+            },
+            "patterns": []
         },
         "adapt_attribute": {
             "patterns": [
@@ -63,6 +79,11 @@
             "captures": { "1": { "name": "keyword.other.files.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
             "patterns": []
         },
+        "artifact_extension": {
+            "match": "\\b(ArtifactExtension)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))",
+            "captures": { "1": { "name": "keyword.other.files.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
+            "patterns": []
+        },
         "bake_variables": {
             "name": "variable.name.bake",
             "begin": "\\$\\(",
@@ -100,6 +121,30 @@
                 "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "name": "constant.language.onoff.bake" } }
             }]
         },
+        "adapt_configuration_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(type):\\s*(replace|remove|extend|push_front)",
+                "captures": {
+                    "1": { "name":"keyword.other.attribute.bake" },
+                    "2": { "name": "constant.language.type.bake" }
+                }
+            },
+            {
+                "match": "\\b(strict):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": {
+                    "1": { "name":"keyword.other.attribute.bake" },
+                    "2": { "patterns": [{ "include": "#boolean" }] }
+                }
+            },
+            {
+                "match": "\\b(project):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": {
+                    "1": { "name":"keyword.other.attribute.bake" },
+                    "2": { "patterns": [{ "include": "#string_or_value" }] }
+                }
+            }]
+        },
         "base_configuration_attribute": {
             "patterns": [
             {
@@ -107,7 +152,7 @@
                 "captures": { "1": { "name":"keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_config" }] } }
             },
             {
-                "match": "\\b(type):\\s*(replace|remove|extend|push_front)",
+                "match": "\\b(mergeInc):\\s*(yes|no)",
                 "captures": { "1": { "name":"keyword.other.attribute.bake" }, "2": { "name": "constant.language.type.bake" } }
             },
             {
@@ -143,7 +188,8 @@
             "patterns":[
                 { "include": "#files" },
                 { "include": "#exclude_files" },
-                { "include": "#artifact_name" }
+                { "include": "#artifact_name" },
+                { "include": "#artifact_extension" }
             ]
         },
         "compiler": {
@@ -167,7 +213,12 @@
             {
                 "match": "\\b(command|prefix):\\s*((\".*?[^\\\\]\")|(\\w*))",
                 "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } }
-            }]
+            },
+            {
+                "match": "\\b(keepObjFileEndings|cuda):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "patterns": [{ "include": "#boolean" }] } }
+            }
+            ]
         },
         "valid_exit_codes_attribute": {
             "patterns": [
@@ -181,6 +232,13 @@
             {
                 "match": "\\b(echo):\\s*(on|off)?",
                 "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "name": "constant.language.onoff.bake" } }
+            }]
+        },
+        "search_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(search):\\s*([\\w]*)",
+                "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#boolean" }] } }
             }]
         },
         "to_attribute": {
@@ -284,6 +342,21 @@
                 { "include": "#makefile" }
             ]
         },
+        "adapt_custom_configuration": {
+            "begin": "\\b(CustomConfig)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))(.*){",
+            "end": "}",
+            "beginCaptures": {
+                "1": { "name":"keyword.other.section.bake" },
+                "2": { "patterns": [{ "include": "#string_or_config" }] },
+                "5": { "patterns": [{ "include": "#base_configuration_attribute" }, { "include": "#adapt_configuration_attribute" }] }
+            },
+            "patterns":[
+                { "include": "#adapt_scope" },
+                { "include": "#base_configuration_content" },
+                { "include": "#command_line" },
+                { "include": "#makefile" }
+            ]
+        },
         "default_toolchain": {
             "begin": "\\b(DefaultToolchain)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))(.*){",
             "end": "}",
@@ -376,6 +449,22 @@
             "captures": { "1": { "name": "keyword.other.entry.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
             "patterns": []
         },
+        "adapt_executable_configuration": {
+            "begin": "\\b(ExecutableConfig)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))(.*){",
+            "end": "}",
+            "beginCaptures": {
+                "1": { "name":"keyword.other.execonfig.bake" },
+                "2": { "patterns": [{ "include": "#string_or_config" }] },
+                "5": { "patterns": [{ "include": "#base_configuration_attribute" }, { "include": "#adapt_configuration_attribute" }] }
+            },
+            "patterns":[
+                { "include": "#adapt_scope" },
+                { "include": "#base_configuration_content" },
+                { "include": "#build_configuration_content" },
+                { "include": "#linker_script" },
+                { "include": "#map_file" }
+            ]
+        },
         "executable_configuration": {
             "begin": "\\b(ExecutableConfig)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))(.*){",
             "end": "}",
@@ -396,19 +485,21 @@
             "captures": {
                 "1": { "name": "keyword.other.entry.bake" },
                 "2": { "patterns": [{ "include": "#string_or_value" }] },
-                "3": { "patterns": [{ "include": "#external_library_attribute" }] }
+                "5": { "patterns": [{ "include": "#search_attribute" }] }
             },
-            "patterns": []
-        },
-        "external_library_attribute": {
-            "match": "\\b(search):\\s*([\\w]*)",
-            "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#boolean" }] } },
             "patterns": []
         },
         "external_library_search_path": {
             "match": "\\b(ExternalLibrarySearchPath)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))",
             "captures": {"1": { "name": "keyword.other.entry.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
             "patterns": []
+        },
+        "files_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(compileOnly):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "patterns": [{ "include": "#boolean" }] } }
+            }]
         },
         "files": {
             "patterns":[
@@ -418,13 +509,21 @@
         },
         "files_single_line": {
             "match": "\\b(Files)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))",
-            "captures": { "1": { "name": "keyword.other.entry.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
+            "captures": {
+                "1": { "name": "keyword.other.entry.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] },
+                "5": { "patterns": [{ "include": "#files_attribute" }] }
+            },
             "patterns": []
         },
         "files_block": {
             "begin": "\\b(Files)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))(.*){",
             "end": "}",
-            "beginCaptures": { "1": { "name":"keyword.other.section.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
+            "beginCaptures": {
+                "1": { "name":"keyword.other.section.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] },
+                "5": { "patterns": [{ "include": "#files_attribute" }] }
+            },
             "patterns":[
                 { "include": "#define" },
                 { "include": "#flags" }
@@ -454,6 +553,20 @@
             "match": "\\b(InternalIncludes)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))",
             "captures": {"1": { "name": "keyword.other.entry.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } },
             "patterns": []
+        },
+        "adapt_library_configuration": {
+            "begin": "\\b(LibraryConfig)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))(.*){",
+            "end": "}",
+            "beginCaptures": {
+                "1": { "name":"keyword.other.section.bake" },
+                "2": { "patterns": [{ "include": "#string_or_config" }] },
+                "5": { "patterns": [{ "include": "#base_configuration_attribute" }, { "include": "#adapt_configuration_attribute" }] }
+            },
+            "patterns":[
+                { "include": "#adapt_scope" },
+                { "include": "#base_configuration_content" },
+                { "include": "#build_configuration_content" }
+            ]
         },
         "library_configuration": {
             "begin": "\\b(LibraryConfig)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))(.*){",
@@ -593,6 +706,10 @@
             {
                 "match": "\\b(lib|target|pathTo):\\s*((\".*?[^\\\\]\")|(\\w*))",
                 "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } }
+            },
+            {
+                "match": "\\b(noClean|changeWorkingDir):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "patterns": [{ "include": "#boolean" }] } }
             }]
         },
         "map_file": {
