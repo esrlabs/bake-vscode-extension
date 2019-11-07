@@ -92,11 +92,11 @@ function getCommandCompletionItems(document: vscode.TextDocument, position: vsco
                 items = ["Makefile", "CommandLine", "Sleep", "MakeDir", "Remove", "Touch", "Copy", "Move"];
                 break;
             case "ExecutableConfig":
-                items.concat(["LinkerScript", "MapFile"]);
+                items = items.concat(["LinkerScript", "MapFile"]);
             case "LibraryConfig":
-                items.concat(["Files", "ExcludeFiles", "ArtifactName", "ArtifactExtension"]);
+                items = items.concat(["Files", "ExcludeFiles", "ArtifactName", "ArtifactExtension"]);
             case "CustomConfig":
-                items.concat(["Description", "IncludeDir", "Set", "Dependency", "ExternalLibrary", "UserLibrary",
+                items = items.concat(["Description", "IncludeDir", "Set", "Dependency", "ExternalLibrary", "UserLibrary",
                     "ExternalLibrarySearchPath", "PreSteps", "PostSteps", "StartupSteps", "ExitSteps",
                     "CleanSteps", "DefaultToolchain", "Toolchain", "Prebuild"]);
                 break;
@@ -135,7 +135,7 @@ function getAttributeCompletionItems(document: vscode.TextDocument, position: vs
         case "ExecutableConfig":
         case "LibraryConfig":
         case "CustomConfig":
-            items = ["extends", "mergeInc", "private"];
+            items = ["extends", "mergeInc", "private", "strict"];
             break;
         case "IncludeDir":
             items = ["inherit", "inject", "system"];
@@ -230,10 +230,17 @@ function getAttibuteValueCompletionItems(document: vscode.TextDocument, position
         case "onlyDirectDeps":
         case "cuda":
         case "compileOnly":
+        case "strict":
             items = ["true", "false"];
             break;
         case "echo":
             items = ["on", "off"];
+            break;
+        case "type":
+            items = ["replace", "remove", "extend", "push_front"];
+            break;
+        case "project":
+            items = ["__MAIN__", "__ALL__", "__THIS__"];
             break;
         default:
             break;
