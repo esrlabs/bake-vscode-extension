@@ -169,6 +169,34 @@
                 "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } }
             }]
         },
+        "valid_exit_codes_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(validExitCodes):\\s*((\".*?[^\\\\]\")|(\\[.*?\\]))?",
+                "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_array" }] } }
+            }]
+        },
+        "echo_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(echo):\\s*(on|off)?",
+                "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "name": "constant.language.onoff.bake" } }
+            }]
+        },
+        "to_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(to):\\s*((\".*?[^\\\\]\")|(\\w*))",
+                "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } }
+            }]
+        },
+        "independent_attribute": {
+            "patterns": [
+            {
+                "match": "\\b(independent):\\s*([\\w]*)",
+                "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#boolean" }] } }
+            }]
+        },
         "command_line": {
             "match": "\\b(CommandLine)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
             "captures": {
@@ -180,14 +208,64 @@
         },
         "command_attribute": {
             "patterns": [
-            {
-                "match": "\\b(echo):\\s*(on|off)?",
-                "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "name": "constant.language.onoff.bake" } }
+                { "include": "#echo_attribute" },
+                { "include": "#independent_attribute" },
+                { "include": "#valid_exit_codes_attribute" }
+            ]
+        },
+        "sleep": {
+            "match": "\\b(Sleep)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": {
+                "1": { "name": "keyword.other.command.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] },
+                "5": { "patterns": [{ "include": "#echo_attribute" }, { "include": "#independent_attribute" }, { "include": "#base_attribute" }] }
             },
-            {
-                "match": "\\b(independent):\\s*([\\w]*)",
-                "captures": { "1": { "name": "keyword.other.attribute.bake" }, "2": { "patterns": [{ "include": "#boolean" }] } }
-            }]
+            "patterns": []
+        },
+        "copy": {
+            "match": "\\b(Copy)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": {
+                "1": { "name": "keyword.other.command.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] },
+                "5": { "patterns": [{ "include": "#to_attribute" }, { "include": "#echo_attribute" }, { "include": "#base_attribute" }] }
+            },
+            "patterns": []
+        },
+        "move": {
+            "match": "\\b(Move)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": {
+                "1": { "name": "keyword.other.command.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] },
+                "5": { "patterns": [{ "include": "#to_attribute" }, { "include": "#echo_attribute" }, { "include": "#base_attribute" }] }
+            },
+            "patterns": []
+        },
+        "make_dir": {
+            "match": "\\b(MakeDir)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": {
+                "1": { "name": "keyword.other.command.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] },
+                "5": { "patterns": [{ "include": "#echo_attribute" }, { "include": "#base_attribute" }] }
+            },
+            "patterns": []
+        },
+        "remove": {
+            "match": "\\b(Remove)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": {
+                "1": { "name": "keyword.other.command.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] },
+                "5": { "patterns": [{ "include": "#echo_attribute" }, { "include": "#base_attribute" }] }
+            },
+            "patterns": []
+        },
+        "touch": {
+            "match": "\\b(Touch)\\b\\s*((\".*?[^\\\\]\")|(\\w*\\b(?!:)))([^#]*)",
+            "captures": {
+                "1": { "name": "keyword.other.command.bake" },
+                "2": { "patterns": [{ "include": "#string_or_value" }] },
+                "5": { "patterns": [{ "include": "#echo_attribute" }, { "include": "#base_attribute" }] }
+            },
+            "patterns": []
         },
         "comment": {
             "patterns": [{ "name": "comment.line.bake", "match": "#.*" }]
@@ -515,10 +593,6 @@
             {
                 "match": "\\b(lib|target|pathTo):\\s*((\".*?[^\\\\]\")|(\\w*))",
                 "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_value" }] } }
-            },
-            {
-                "match": "\\b(validExitCodes):\\s*((\".*?[^\\\\]\")|(\\[.*?\\]))?",
-                "captures": { "1": { "name":"keyword.other.base_attribute.bake" }, "2": { "patterns": [{ "include": "#string_or_array" }] } }
             }]
         },
         "map_file": {
@@ -576,6 +650,12 @@
             "beginCaptures": { "1": { "name": "keyword.other.steps.bake" } },
             "patterns":[
                 { "include": "#command_line" },
+                { "include": "#make_dir" },
+                { "include": "#sleep" },
+                { "include": "#copy" },
+                { "include": "#move" },
+                { "include": "#remove" },
+                { "include": "#touch" },
                 { "include": "#makefile" },
                 { "include": "#comment" }
             ]
