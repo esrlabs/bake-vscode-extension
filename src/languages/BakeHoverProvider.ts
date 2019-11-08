@@ -28,7 +28,7 @@ export class BakeHoverProvider implements vscode.HoverProvider {
 
 function ddrivetip(item: string, manda: string, quan: string, def: string, desc: string) {
     const mdTemplate =
-`_${item}_  
+`[${item}](https://esrlabs.github.io/bake/syntax/project_meta_syntax.html)  
 
 __Mandatory:__ ${manda}  
 __Quantity:__ ${quan}  
