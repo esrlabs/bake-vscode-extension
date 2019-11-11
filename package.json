@@ -123,6 +123,7 @@
     "lint": "node_modules/tslint/bin/tslint -c tslint.json 'src/**/*.ts' --fix"
   },
   "devDependencies": {
+    "@types/minimatch": "^3.0.3",
     "@types/mocha": "^5.2.4",
     "@types/node": "^10.5.2",
     "tslint": "5.10.0",

@@ -6,16 +6,14 @@ import {cleanIncludesAndDefines} from "./commands/cleanIncludesAndDefines";
 import {doImportBuildVariantFromSettings, importIncludesAndDefines} from "./commands/importIncludesAndDefines";
 import {registerAutoDetectedBakeTasks} from "./tasks/AutoDetectedBuildTasks";
 import {registerActiveBakeTasks} from "./tasks/VariantBuildTasks";
+import { BakeHoverProvider } from "./languages/BakeHoverProvider";
 import { BakeCompletionItemProvider } from "./languages/BakeCompletionItemProvider";
-
 
 import newCppFile from "./commands/newCppFile";
 import newHeaderFile from "./commands/newHeaderFile";
 
 import { BakeExtensionSettings } from "./settings/BakeExtensionSettings";
 import logger from "./util/logger";
-
-let bakeTaskProviders: vscode.Disposable[] = [];
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -43,9 +41,10 @@ export async function activate(cntxt: vscode.ExtensionContext) {
         cleanIncludesAndDefines(context);
     });
 
-    bakeTaskProviders.push(registerActiveBakeTasks(cntxt));
-    bakeTaskProviders.push(registerAutoDetectedBakeTasks(cntxt));
-    bakeTaskProviders.push(
+    cntxt.subscriptions.push(registerActiveBakeTasks(cntxt));
+    cntxt.subscriptions.push(registerAutoDetectedBakeTasks(cntxt));
+    cntxt.subscriptions.push(vscode.languages.registerHoverProvider(BakeHoverProvider.BakeType, new BakeHoverProvider(cntxt)));
+    cntxt.subscriptions.push(
         vscode.languages.registerCompletionItemProvider(
             "bake", new BakeCompletionItemProvider(), ':', ',', '\n'));
 
@@ -69,11 +68,6 @@ async function importDefaultBuildVariant() {
         await doImportBuildVariantFromSettings(name, settings.getBuildVariant(name));
     }
     vscode.window.setStatusBarMessage(`Auto imported C++ Includes and Defines from Bake done`, 5000);
-}
-
-// this method is called when your extension is deactivated
-export function deactivate() {
-    bakeTaskProviders.forEach(t => t.dispose());
 }
 
 function warnOnDeprecated() {
