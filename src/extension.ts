@@ -6,14 +6,14 @@ import {cleanIncludesAndDefines} from "./commands/cleanIncludesAndDefines";
 import {doImportBuildVariantFromSettings, importIncludesAndDefines} from "./commands/importIncludesAndDefines";
 import { BakeTaskProvider } from "./tasks/BakeTaskProvider";
 import {registerActiveBakeTasks} from "./tasks/VariantBuildTasks";
+import { BakeHoverProvider } from "./languages/BakeHoverProvider";
+import { BakeCompletionItemProvider } from "./languages/BakeCompletionItemProvider";
 
 import newCppFile from "./commands/newCppFile";
 import newHeaderFile from "./commands/newHeaderFile";
 
 import { BakeExtensionSettings } from "./settings/BakeExtensionSettings";
 import logger from "./util/logger";
-
-let bakeTaskProviders: vscode.Disposable[] = [];
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -42,9 +42,18 @@ export async function activate(cntxt: vscode.ExtensionContext) {
     });
 
     let workspaceRoot = vscode.workspace.rootPath;
+    const BAKE_TYPE = "bake";
 
-    bakeTaskProviders.push(registerActiveBakeTasks(cntxt));
-    bakeTaskProviders.push(vscode.workspace.registerTaskProvider(BakeTaskProvider.BakeType, new BakeTaskProvider(workspaceRoot)));
+    cntxt.subscriptions.push(registerActiveBakeTasks(cntxt));
+    cntxt.subscriptions.push(
+        vscode.workspace.registerTaskProvider(
+            BAKE_TYPE, new BakeTaskProvider(workspaceRoot)));
+    cntxt.subscriptions.push(
+        vscode.languages.registerHoverProvider(
+            BAKE_TYPE, new BakeHoverProvider(cntxt)));
+    cntxt.subscriptions.push(
+        vscode.languages.registerCompletionItemProvider(
+            BAKE_TYPE, new BakeCompletionItemProvider(), ':', ',', '\n'));
 
     warnOnDeprecated();
 
@@ -66,11 +75,6 @@ async function importDefaultBuildVariant() {
         await doImportBuildVariantFromSettings(name, settings.getBuildVariant(name));
     }
     vscode.window.setStatusBarMessage(`Auto imported C++ Includes and Defines from Bake done`, 5000);
-}
-
-// this method is called when your extension is deactivated
-export function deactivate() {
-    bakeTaskProviders.forEach(t => t.dispose());
 }
 
 function warnOnDeprecated() {
