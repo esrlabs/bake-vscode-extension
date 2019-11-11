@@ -1,6 +1,7 @@
 [
     {
         "key": "Project",
+        "contextGlobPattern": "**",
         "mandatory": "Yes",
         "quantity": "1",
         "default": "-",
@@ -8,6 +9,7 @@
     },
     {
         "key": "default",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "-",
         "default": "-",
@@ -15,6 +17,7 @@
     },
     {
         "key": "Description",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..1",
         "default": "-",
@@ -22,6 +25,7 @@
     },
     {
         "key": "RequiredBakeVersion",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..1",
         "default": "-",
@@ -29,6 +33,7 @@
     },
     {
         "key": "Responsible",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..1",
         "default": "-",
@@ -36,6 +41,7 @@
     },
     {
         "key": "Person",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..1",
         "default": "-",
@@ -43,6 +49,7 @@
     },
     {
         "key": "email",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "-",
         "default": "-",
@@ -50,6 +57,7 @@
     },
     {
         "key": "ExecutableConfig",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..n",
         "default": "-",
@@ -57,6 +65,7 @@
     },
     {
         "key": "LibraryConfig",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..n",
         "default": "-",
@@ -64,6 +73,7 @@
     },
     {
         "key": "CustomConfig",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..n",
         "default": "-",
@@ -71,6 +81,7 @@
     },
     {
         "key": "extends",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..1",
         "default": "-",
@@ -78,6 +89,7 @@
     },
     {
         "key": "mergeInc",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..1",
         "default": "-",
@@ -85,6 +97,7 @@
     },
     {
         "key": "private",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..1",
         "default": "false",
@@ -92,6 +105,7 @@
     },
     {
         "key": "IncludeDir",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..n",
         "default": "-",
@@ -99,6 +113,7 @@
     },
     {
         "key": "inherit",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..1",
         "default": "false",
@@ -106,6 +121,7 @@
     },
     {
         "key": "inject",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..1",
         "default": "-",
@@ -113,6 +129,7 @@
     },
     {
         "key": "system",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..1",
         "default": "-",
@@ -120,6 +137,7 @@
     },
     {
         "key": "Set",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..n",
         "default": "-",
@@ -127,6 +145,7 @@
     },
     {
         "key": "env",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "-",
         "default": "false",
@@ -134,6 +153,7 @@
     },
     {
         "key": "Dependency",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..n",
         "default": "-",
@@ -141,6 +161,7 @@
     },
     {
         "key": "config",
+        "contextGlobPattern": "**.Dependency",
         "mandatory": "Yes",
         "quantity": "-",
         "default": "-",
@@ -148,6 +169,7 @@
     },
     {
         "key": "ExternalLibrary",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..n",
         "default": "-",
@@ -155,6 +177,7 @@
     },
     {
         "key": "search",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "-",
         "default": "true",
@@ -162,6 +185,7 @@
     },
     {
         "key": "UserLibrary",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..n",
         "default": "-",
@@ -169,6 +193,7 @@
     },
     {
         "key": "ExternalLibrarySearchPath",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..n",
         "default": "-",
@@ -176,6 +201,7 @@
     },
     {
         "key": "PreSteps",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..1",
         "default": "-",
@@ -183,6 +209,7 @@
     },
     {
         "key": "PostSteps",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..1",
         "default": "-",
@@ -190,6 +217,7 @@
     },
     {
         "key": "StartupSteps",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..1",
         "default": "-",
@@ -197,6 +225,7 @@
     },
     {
         "key": "ExitSteps",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..1",
         "default": "-",
@@ -204,6 +233,7 @@
     },
     {
         "key": "CleanSteps",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..1",
         "default": "-",
@@ -211,9 +241,418 @@
     },
     {
         "key": "Makefile",
+        "contextGlobPattern": "**",
         "mandatory": "No",
         "quantity": "0..n",
         "default": "-",
         "description": "Makefile to be started, e.g.:  \n> Makefile \"subDir/makefile\"\n\nBefore executing the makefile, bake sets the environment variables  \n> $(BAKE_XX_COMMAND) and $(BAKE_XX_FLAGS),\n\nwhereas XX is one of  \n> CPP, C, ASM, AR or LD."
+    },
+    {
+        "key": "lib",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "-",
+        "default": "-",
+        "description": "If the result of the makefile is a library which shall be linked to the executable, name it here."
+    },
+    {
+        "key": "target",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "-",
+        "default": "all",
+        "description": "The target of the makefile."
+    },
+    {
+        "key": "pathTo",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "-",
+        "default": "-",
+        "description": "Comma separated list, e.g. \"common, abc, xy\".  \nThe makefile can use variables like $(PATH_TO_common). This is very useful if paths to other projects are needed in the makefile.  \nRemember that more than one workspace root can exist and a hardcoded \"../common\" is not reliable in that case.  \n$(PATH_TO_common) will result in the path from the parent directory of the current project to the common project without the common directory itself. So if the current project and the common project have the same parent folder, the string will be empty.  \nExample:  \nmakefile: c:\\workspaceroot\\yourProject\\makefile  \nusage in makefile: gcc -I$../../$(PATH_TO_common)common/include ...  \nIt's done like this due to compatibility reasons."
+    },
+    {
+        "key": "noClean",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "false",
+        "description": "If project is cleaned (e.g. with command line argument -c), the target \"clean\" will be executed unless noClean is set to true."
+    },
+    {
+        "key": "changeWorkingDir",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "true",
+        "description": "If set to false, the working directory will be the project directory instead of the makefile directory."
+    },
+    {
+        "key": "echo",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "-",
+        "default": "on",
+        "description": "\"on\" means the command line is shown in output, \"off\" means the command line is not shown."
+    },
+    {
+        "key": "independent",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "-",
+        "default": "false",
+        "description": "\"true\" means the step can be built in parallel to other projects. \"false\" means everything before must be completed, the step runs exclusively."
+    },
+    {
+        "key": "validExitCodes",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "-",
+        "default": "[0]",
+        "description": "Define it as an array, e.g.:  \n..., validExitCodes: [200,201,202]"
+    },
+    {
+        "key": "Flags",
+        "contextGlobPattern": "**.Makefile",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "-j",
+        "description": "Additional makefile flags"
+    },
+    {
+        "key": "CommandLine",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "-",
+        "description": "A command to execute, e.g.:  \n> CommandLine \"ddump -Ruv -y 0xFFFFF -oRelease/application.bin Release/application.elf\"\n\n> CommandLine \"echo Hello world!\""
+    },
+    {
+        "key": "Sleep",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "0.0",
+        "description": "Sleep in seconds, floats are allowed."
+    },
+    {
+        "key": "MakeDir",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "-",
+        "description": "A file or folder will be created."
+    },
+    {
+        "key": "Remove",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "-",
+        "description": "A file or folder will be removed."
+    },
+    {
+        "key": "Touch",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "-",
+        "description": "A file or folder will be touched."
+    },
+    {
+        "key": "Copy",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "-",
+        "description": "A file or folder will be copied."
+    },
+    {
+        "key": "Move",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "-",
+        "description": "A file or folder will be moved."
+    },
+    {
+        "key": "DefaultToolchain",
+        "contextGlobPattern": "**",
+        "mandatory": "In main project",
+        "quantity": "0..1",
+        "default": "-",
+        "description": "Settings which are valid for all projects and files unless they will be overwritten.  \nThe attribute \"basedOn\" specifies the basic toolchain configuration provided by bake, e.g. \"GCC\", \"Diab\", etc."
+    },
+    {
+        "key": "outputDir",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "-",
+        "description": "Specifies the output folder.  \nUse always relative paths, not absolute paths due to portability.  \nUse always \"/\" and not \"\\\".  \nIf the first part of the path is equal to a project name, it is used as a shortcut to this project root.  \nTo avoid this magic, use something like this:  \n> IncludeDir \"./abc/include\""
+    },
+    {
+        "key": "eclipseOrder",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "-",
+        "default": "false",
+        "description": "If not specified or false, all files are compiled in order of appearance in Project.meta. If the filename is a glob pattern, files are sorted alphabetically.  \nIf true, files are compiled in alphabetical order within a folder, but the folders are sorted in reverse alphabetical order.  \nThis is only used for backward compatibility."
+    },
+    {
+        "key": "Compiler",
+        "contextGlobPattern": "**.DefaultToolchain",
+        "mandatory": "No",
+        "quantity": "0..3 (for each compiler type: ASM, CPP, C)",
+        "default": "-",
+        "description": "Flags and defines can be specified independently for each compiler type."
+    },
+    {
+        "key": "command",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "-",
+        "default": "Depending on toolchain, e.g. \"gcc\"",
+        "description": "Change command, e.g. \"$(PATH_TO_EXE)/gcc_speciale.exe\""
+    },
+    {
+        "key": "prefix",
+        "contextGlobPattern": "**.Compiler",
+        "mandatory": "No",
+        "quantity": "-",
+        "default": "$(CompilerPrefix)",
+        "description": "Wrapper for compiler, e.g. a (s)ccache. If variable is not set, no prefix is used.  \nYou can use the adapt feature to set the variable or overwrite the prefix."
+    },
+    {
+        "key": "keepObjFileEndings",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "-",
+        "default": "false",
+        "description": "If false (default), the original source file endings will be cutted off (e.g. file1.cpp to file1.o), otherwise kept (file1.cpp.o)."
+    },
+    {
+        "key": "Flags",
+        "contextGlobPattern": "**.DefaultToolchain.{Compiler,Archiver,Linker}",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "-",
+        "description": "Default flags."
+    },
+    {
+        "key": "Define",
+        "contextGlobPattern": "**.DefaultToolchain.Compiler",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "-",
+        "description": "Defines which are valid for all files."
+    },
+    {
+        "key": "InternalDefines",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "-",
+        "description": "File with list of compiler internal defines.  \nOne define per line.  \nEmpty lines and comments with # are allowed."
+    },
+    {
+        "key": "SrcFileEndings",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "-",
+        "default": "-",
+        "description": "List of all source file endings with dot and comma separated which are handled by this CPP, C or ASM compiler, e.g. \".cpp, .c, .cxx\".  \nThe list must not be empty."
+    },
+    {
+        "key": "Archiver",
+        "contextGlobPattern": "**.DefaultToolchain",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "-",
+        "description": "Default settings for the archiver."
+    },
+    {
+        "key": "prefix",
+        "contextGlobPattern": "**.Archiver",
+        "mandatory": "No",
+        "quantity": "-",
+        "default": "$(ArchiverPrefix)",
+        "description": "Wrapper for archiver. If variable is not set, no prefix is used.  \nYou can use the adapt feature to set the variable or overwrite the prefix."
+    },
+    {
+        "key": "Linker",
+        "contextGlobPattern": "**.DefaultToolchain",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "-",
+        "description": "Default settings for the linker."
+    },
+    {
+        "key": "prefix",
+        "contextGlobPattern": "**.Linker",
+        "mandatory": "No",
+        "quantity": "-",
+        "default": "$(LinkerPrefix)",
+        "description": "Wrapper for linker. If variable is not set, no prefix is used.  \nYou can use the adapt feature to set the variable or overwrite the prefix."
+    },
+    {
+        "key": "onlyDirectDeps",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "-",
+        "default": "false",
+        "description": "If set to true, only first level libraries will be linked (not sub-dependencies from dependencies)."
+    },
+    {
+        "key": "LibPrefixFlags",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "-",
+        "description": "Linker libs can be prefixed if needed, e.g. with \"-Wl,--whole-archive\"."
+    },
+    {
+        "key": "LibPostfixFlags",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "-",
+        "description": "Linker libs can be postfixed if needed, e.g. with \"-Wl,--no-whole-archive\"."
+    },
+    {
+        "key": "InternalIncludes",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "-",
+        "description": "File with list of compiler internal include folders.  \nOne folder per line.  \nEmpty lines and comments with # are allowed."
+    },
+    {
+        "key": "Docu",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "-",
+        "description": "Command to build the documentation. e.g.:  \ndoxygen main.cfg"
+    },
+    {
+        "key": "Toolchain",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "The DefaultToolchain settings from the main project",
+        "description": "Toolchain adaptions for a project."
+    },
+    {
+        "key": "cuda",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "false",
+        "description": "Enables Cuda hack.  \nAdds some prefixes in front of dependency flags."
+    },
+    {
+        "key": "Flags",
+        "contextGlobPattern": "**.Toolchain.{Compiler,Linker,Archiver}",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "Flags from DefaultToolchain",
+        "description": "Flags from the DefaultToolchain can be overwritten, extended or (partly) removed.\n\nFor removing flags use regular expressions which can be interpreted by ruby.  \nRegex options for start and stop string are automatically added in order to avoid substring matches.\n\nFlag strings are always splitted at spaces and computed individually.\n\nExamples:\n\n> Flags \"-x -y\" # overwrites the inherited flags\n\n> Flags add: \"-x -y\" # adds -x and -y if not exist\n\n> Flags remove: \"-x -y\" # removes -x and -y if exist\n\nIt is possible to combine the attributes like this:  \n> Flags remove: \"-x\", add: \"-y\"\n\nTo remove -g followed by any string, e.g. -g3, the command is:  \n> Flags remove: \"-g.*\"\n\nAn inherited flag string \"-abc -g3 -xy\" will end up in \"-abc -xy\"."
+    },
+    {
+        "key": "Define",
+        "contextGlobPattern": "**.Toolchain.Compiler",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "-",
+        "description": "Defines valid for all files in the project."
+    },
+    {
+        "key": "Compiler",
+        "contextGlobPattern": "**.Toolchain",
+        "mandatory": "No",
+        "quantity": "0..3 (for each compiler type: ASM, CPP, C)",
+        "default": "-",
+        "description": "Flags and defines can be specified independently for each compiler type."
+    },
+    {
+        "key": "Archiver",
+        "contextGlobPattern": "**.Toolchain",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "-",
+        "description": "Settings for the archiver."
+    },
+    {
+        "key": "Linker",
+        "contextGlobPattern": "**.Toolchain",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "-",
+        "description": "Make sense only for ExecutableConfigs."
+    },
+    {
+        "key": "Prebuild",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "No project/config is skipped",
+        "description": "If defined, all configs of the workspace will be skipped per default. Must be actived by the commandline option \"--prebuild\""
+    },
+    {
+        "key": "Except",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "Every project is skipped",
+        "description": "Defines a project which shall not be skipped. If project name is omitted, the current project is used."
+    },
+    {
+        "key": "config",
+        "contextGlobPattern": "**.Prebuild",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "Every config is skipped",
+        "description": "Defines a config which shall not be skipped. If omitted, all configs of the apprpriate project are not skipped."
+    },
+    {
+        "key": "Files",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "-",
+        "description": "Specifies the files to build.  \nIt's valid to specify a single file, e.g.  \n> Files \"src/abc/def.asm\"\n\nor a pattern, e.g.  \n> Files \"*/**/.cpp\"\n\nwhich builds all files with the ending \".cpp\" in all subdirectories.  \nNote: \"..\" is not allowed in the file path. All files must be located within the project.  \nNote: if patterns are used, Flags and Define are ignored."
+    },
+    {
+        "key": "compileOnly",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "false",
+        "description": "If set, the files will not be archived or linked."
+    },
+    {
+        "key": "ExcludeFiles",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..n",
+        "default": "-",
+        "description": "Used to ignore files or directories.  \nExcludeFiles has higher priority than Files."
+    },
+    {
+        "key": "ArtifactName",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "Executable: project name + toolchain dependent file ending. Library: 'lib' + project name + '.a'",
+        "description": "The artifact name inclusive file ending.  \nThe artifact will be placed in the output directory."
+    },
+    {
+        "key": "ArtifactExtension",
+        "contextGlobPattern": "**",
+        "mandatory": "No",
+        "quantity": "0..1",
+        "default": "toolchain dependent file ending",
+        "description": "The artifact extension, e.g. \"exe\".  \nIf ArtifactName is also specified, ArtifactExtension has no effect."
     }
 ]

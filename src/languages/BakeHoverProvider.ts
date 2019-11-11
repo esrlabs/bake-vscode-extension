@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import * as minimatch from "minimatch";
 
 export class BakeHoverProvider implements vscode.HoverProvider {
     static BakeType: string = 'bake';
@@ -13,8 +14,11 @@ export class BakeHoverProvider implements vscode.HoverProvider {
 
         const range = document.getWordRangeAtPosition(position);
         const word = document.getText(range);
+        const positionCtx = getPositionContext(document, position).join(".");
 
-        let found = this.commands.find((element, _index, _array) => element.key == word);
+        let found = this.commands.find((element, _index, _array) => {
+            return (element.key == word && minimatch(positionCtx, element.contextGlobPattern));
+        });
 
         if (found == undefined)
             return null;
@@ -24,6 +28,33 @@ export class BakeHoverProvider implements vscode.HoverProvider {
 
         return new vscode.Hover(hoverText);
     }
+}
+
+function getPositionContext(document: vscode.TextDocument, position: vscode.Position) {
+
+    let line = position.line;
+    const openRegex = new RegExp(/^\s*(\w*).*{\s*/);
+    const closeRegex = new RegExp(/^.*}\s*/);
+    let skipCounter = 0;
+    let context = [];
+
+    while (line >= 0) {
+        const textLine = document.lineAt(line).text;
+        if (closeRegex.test(textLine))
+            skipCounter++;
+
+        let result = textLine.match(openRegex);
+        if (result && result.length > 1) {
+            if (skipCounter == 0)
+                context.unshift(result[1]);
+            else
+                skipCounter--;
+        }
+
+        line--;
+    }
+
+    return context;
 }
 
 function ddrivetip(item: string, manda: string, quan: string, def: string, desc: string) {
