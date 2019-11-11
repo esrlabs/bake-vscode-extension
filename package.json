@@ -16,6 +16,12 @@
     "workspaceContains:**/Project.meta"
   ],
   "main": "./out/extension",
+  "capabilities": {
+    "completionProvider" : {
+      "resolveProvider": "true",
+      "triggerCharacters": [ ":", ",", "\n" ]
+    }
+  },
   "contributes": {
     "languages": [
       {
