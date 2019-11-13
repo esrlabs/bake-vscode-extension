@@ -8,6 +8,7 @@ import {registerAutoDetectedBakeTasks} from "./tasks/AutoDetectedBuildTasks";
 import {registerActiveBakeTasks} from "./tasks/VariantBuildTasks";
 import { BakeHoverProvider } from "./languages/BakeHoverProvider";
 import { BakeCompletionItemProvider } from "./languages/BakeCompletionItemProvider";
+import { BakeDocumentFormatter } from "./languages/BakeDocumentFormatter";
 
 import newCppFile from "./commands/newCppFile";
 import newHeaderFile from "./commands/newHeaderFile";
@@ -47,6 +48,9 @@ export async function activate(cntxt: vscode.ExtensionContext) {
     cntxt.subscriptions.push(
         vscode.languages.registerCompletionItemProvider(
             "bake", new BakeCompletionItemProvider(), ':', ',', '\n'));
+    cntxt.subscriptions.push(
+        vscode.languages.registerDocumentFormattingEditProvider(
+            "bake", new BakeDocumentFormatter()));
 
     warnOnDeprecated();
 

@@ -17,7 +17,8 @@
   ],
   "main": "./out/extension",
   "capabilities": {
-    "completionProvider" : {
+    "documentFormattingProvider": "true",
+    "completionProvider": {
       "resolveProvider": "true",
       "triggerCharacters": [ ":", ",", "\n" ]
     }
