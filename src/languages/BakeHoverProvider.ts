@@ -2,7 +2,6 @@ import * as vscode from "vscode";
 import * as minimatch from "minimatch";
 
 export class BakeHoverProvider implements vscode.HoverProvider {
-    static BakeType: string = 'bake';
 
     private commands;
 

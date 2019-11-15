@@ -4,7 +4,7 @@
 import * as vscode from "vscode";
 import {cleanIncludesAndDefines} from "./commands/cleanIncludesAndDefines";
 import {doImportBuildVariantFromSettings, importIncludesAndDefines} from "./commands/importIncludesAndDefines";
-import {registerAutoDetectedBakeTasks} from "./tasks/AutoDetectedBuildTasks";
+import { BakeTaskProvider } from "./tasks/BakeTaskProvider";
 import {registerActiveBakeTasks} from "./tasks/VariantBuildTasks";
 import { BakeHoverProvider } from "./languages/BakeHoverProvider";
 import { BakeCompletionItemProvider } from "./languages/BakeCompletionItemProvider";
@@ -42,15 +42,22 @@ export async function activate(cntxt: vscode.ExtensionContext) {
         cleanIncludesAndDefines(context);
     });
 
+    let workspaceRoot = vscode.workspace.rootPath;
+    const BAKE_TYPE = "bake";
+
     cntxt.subscriptions.push(registerActiveBakeTasks(cntxt));
-    cntxt.subscriptions.push(registerAutoDetectedBakeTasks(cntxt));
-    cntxt.subscriptions.push(vscode.languages.registerHoverProvider(BakeHoverProvider.BakeType, new BakeHoverProvider(cntxt)));
+    cntxt.subscriptions.push(
+        vscode.workspace.registerTaskProvider(
+            BAKE_TYPE, new BakeTaskProvider(workspaceRoot)));
+    cntxt.subscriptions.push(
+        vscode.languages.registerHoverProvider(
+            BAKE_TYPE, new BakeHoverProvider(cntxt)));
     cntxt.subscriptions.push(
         vscode.languages.registerCompletionItemProvider(
-            "bake", new BakeCompletionItemProvider(), ':', ',', '\n'));
+            BAKE_TYPE, new BakeCompletionItemProvider(), ':', ',', '\n'));
     cntxt.subscriptions.push(
         vscode.languages.registerDocumentFormattingEditProvider(
-            "bake", new BakeDocumentFormatter()));
+            BAKE_TYPE, new BakeDocumentFormatter()));
 
     warnOnDeprecated();
 

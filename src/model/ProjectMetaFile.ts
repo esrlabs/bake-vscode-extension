@@ -7,7 +7,7 @@ import logger from "../util/logger";
 export class ProjectMetaFile {
 
     private path = require("path");
-    private filePath;
+    private filePath: string;
 
     constructor(filePath: string) {
         this.filePath = filePath.replace(/\\/g, "/");
@@ -24,6 +24,26 @@ export class ProjectMetaFile {
 
     public getFolderPath(): string {
         return this.path.dirname(this.filePath).replace(/\\/g, "/");
+    }
+
+    public getDefaultTarget(): Thenable<string> {
+        return vscode.workspace.openTextDocument(this.filePath)
+            .then((document) => {
+                const re = /^[^#A-Za-z0-9]*(?:Project default:)\s+(\w*)/;
+                let res: string;
+                for (let l = 0; l < document.lineCount; ++l) {
+                    const line = document.lineAt(l);
+                    const match = line.text.match(re);
+                    if (match) {
+                        res = match[1];
+                        break;
+                    }
+                }
+                return res
+            }).then(null, (e) => {
+                logger.error(e.toString());
+                return "";
+            });
     }
 
     public getWorkspaceFolder(): vscode.WorkspaceFolder {
