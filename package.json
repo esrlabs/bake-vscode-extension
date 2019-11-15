@@ -36,6 +36,24 @@
         "configuration": "./language-configuration.json"
       }
     ],
+    "taskDefinitions": [
+      {
+        "type": "bake",
+        "required": [
+          "project"
+        ],
+        "properties": {
+          "project": {
+            "type": "string",
+            "description": "The Bake project to customize"
+          },
+          "config": {
+              "type": "string",
+              "description": "The Bake config to customize"
+          }
+        }
+      }
+    ],
     "grammars": [
       {
         "language": "bake",

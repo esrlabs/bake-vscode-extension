@@ -36,7 +36,7 @@ function createBuildTasksOfActiveBuildVariants(): vscode.Task[] {
         const v = buildVariantsMap[variantName];
         logger.info(`Build variant to derive Tasks from:\n${util.inspect(v)}`);
         const name = `${variantName} -> '${v.config}' in ${v.project}`;
-        return createBuildTask(name, v, "Bake Variant");
+        return createBuildTask(name, v);
     });
 }
 
