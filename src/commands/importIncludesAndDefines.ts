@@ -9,7 +9,9 @@ import { BuildVariant, createBuildVariantFrom } from "../model/BuildVariant";
 import { globalState } from "../model/GlobalState";
 import { createBakeWorkspace } from "../model/Workspace";
 import BakeExtensionSettings from "../settings/BakeExtensionSettings";
-import logger from "../util/logger";
+import { createLogger } from "../util/logger";
+
+const log = createLogger();
 
 /**
  * Import command to be called from VSCode command menu.
@@ -17,7 +19,7 @@ import logger from "../util/logger";
  * @param context
  */
 export async function importIncludesAndDefines(context: vscode.ExtensionContext) {
-    logger.info("displaying importIncludesAndDefines command");
+    log.info("displaying importIncludesAndDefines command");
 
     //
     // Check some prerequisites first
@@ -27,7 +29,7 @@ export async function importIncludesAndDefines(context: vscode.ExtensionContext)
         return;
     }
 
-    logger.info("Assuming workspace folder: " + globalState().getWorkspaceFolderPath());
+    log.info("Assuming workspace folder: " + globalState().getWorkspaceFolderPath());
 
     const cppConfigFile = new CppConfigFile(globalState().getWorkspaceFolderPath());
     if (!cppConfigFile.exists()) {
@@ -80,7 +82,7 @@ export async function importIncludesAndDefines(context: vscode.ExtensionContext)
         }
         vscode.window.setStatusBarMessage(`Import C++ Includes and Defines from Bake done`, 5000);
     } catch (error) {
-        logger.error(error);
+        log.error(error);
         vscode.window.showErrorMessage("Importing C++ Includes and Defines failed! Check bake tab of the output window for details.");
     }
 }
@@ -134,16 +136,16 @@ async function doImportBySearch(context: vscode.ExtensionContext) {
 }
 
 export async function doImportBuildVariantFromSettings(name, buildVariant) {
-    logger.info(`Importing "${name}" build variant`);
+    log.info(`Importing "${name}" build variant`);
 
     const settings = new BakeExtensionSettings();
     const buildVariants = settings.resolveImportsOfBuildVariant(buildVariant);
 
-    logger.info(`Build variant "${name}" is defined as:\n${util.inspect(buildVariants)}`);
+    log.info(`Build variant "${name}" is defined as:\n${util.inspect(buildVariants)}`);
 
     const incsAndDefsImporter = new IncsAndDefsImporter(globalState().getWorkspaceFolderPath());
 
     await incsAndDefsImporter.importAll(buildVariants);
 
-    logger.info(`Importing "${name}" build variant done`);
+    log.info(`Importing "${name}" build variant done`);
 }

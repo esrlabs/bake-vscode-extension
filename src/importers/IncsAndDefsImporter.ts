@@ -3,7 +3,9 @@ import IncsAndDefsExecutor from "../bake/IncsAndDefsExecutor";
 import CppConfigFile from "../intellisense/CppConfigFile";
 import {BuildVariant} from "../model/BuildVariant";
 import { globalState } from "../model/GlobalState";
-import logger from "../util/logger";
+import { createLogger } from "../util/logger";
+
+const log = createLogger();
 
 class IncsAndDefsImporter {
 
@@ -18,7 +20,7 @@ class IncsAndDefsImporter {
     }
 
     public async importAll(buildVariants: BuildVariant[]) {
-        logger.info(`Importing ${util.inspect(buildVariants)} exclusivly`);
+        log.info(`Importing ${util.inspect(buildVariants)} exclusivly`);
 
         this.cppConfigFile.cleanImportsAndDefines();
 
@@ -28,7 +30,7 @@ class IncsAndDefsImporter {
     }
 
     public async importExclusively(buildVariant: BuildVariant) {
-        logger.info(`Importing ${util.inspect(buildVariant)} exclusivly`);
+        log.info(`Importing ${util.inspect(buildVariant)} exclusivly`);
         const update = this.incsAndDefsExecutor.execute(buildVariant.project, buildVariant.config, buildVariant.adapt);
         return update.then((result) => {
             this.cppConfigFile.cleanImportsAndDefines();
@@ -40,7 +42,7 @@ class IncsAndDefsImporter {
     }
 
     public async addImport(buildVariant: BuildVariant) {
-        logger.info(`Importing ${util.inspect(buildVariant)}`);
+        log.info(`Importing ${util.inspect(buildVariant)}`);
         const update = this.incsAndDefsExecutor.execute(buildVariant.project, buildVariant.config, buildVariant.adapt);
         return update.then((result) => {
             this.cppConfigFile.addImportsAndDefines(result.includes, result.defines);

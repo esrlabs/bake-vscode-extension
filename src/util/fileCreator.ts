@@ -5,7 +5,9 @@ import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 import { globalState } from "../model/GlobalState";
-import logger from "../util/logger";
+import { createLogger } from "../util/logger";
+
+const log = createLogger();
 
 doT.templateSettings.strip = false;
 doT.templateSettings.varname = "file";
@@ -23,7 +25,7 @@ function fileCreator(fullFilename: string, template: string, name: string) {
         });
 
     fs.appendFile(fullFilename, content, () => {
-        logger.info("Opening " + fullFilename);
+        log.info("Opening " + fullFilename);
         vscode.workspace.openTextDocument(fullFilename).then((doc) => {
             vscode.window.showTextDocument(doc);
         });
@@ -36,14 +38,14 @@ function detectNamespaces(folder: string): string[] {
     const includePath = findMatchingIncludePath(folder);
 
     if (!includePath) {
-        logger.info("Namespace detection heuristic failed. " + folder + " not covered by bake's include path?");
+        log.info("Namespace detection heuristic failed. " + folder + " not covered by bake's include path?");
         return [];
     }
 
     const similarity = stringSimilarity(includePath, folder);
     const folderPathRelativeToIncludePath = folder.substring(similarity);
     const namespaces = splitBySeperator(folderPathRelativeToIncludePath);
-    logger.info("Detected namespaces: " + namespaces);
+    log.info("Detected namespaces: " + namespaces);
     return namespaces;
 }
 

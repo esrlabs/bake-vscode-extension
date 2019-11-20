@@ -1,5 +1,7 @@
 import * as vscode from "vscode";
-import logger from "../util/logger";
+import { createLogger } from "../util/logger";
+
+const log = createLogger();
 
 /**
  * Represents a Project.meta file in a BakeWorkspace
@@ -41,7 +43,7 @@ export class ProjectMetaFile {
                 }
                 return res
             }).then(null, (e) => {
-                logger.error(e.toString());
+                log.error(e.toString());
                 return "";
             });
     }
@@ -78,9 +80,9 @@ export class ProjectMetaFile {
                         matches.push(match[1]);
                     }
                 }
-                return matches
+                return matches;
             }).then(null, (e) => {
-                logger.error(e.toString());
+                log.error(e.toString());
                 return [];
             });
     }

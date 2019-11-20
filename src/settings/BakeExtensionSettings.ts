@@ -1,7 +1,9 @@
 import * as util from "util";
 import * as vscode from "vscode";
-import {BuildVariant} from "../model/BuildVariant";
-import logger from "../util/logger";
+import { BuildVariant } from "../model/BuildVariant";
+import { createLogger } from "../util/logger";
+
+const log = createLogger();
 
 const EXAMPLE_VARIANT = {
     project: "Spaceship3",
@@ -60,7 +62,7 @@ export class BakeExtensionSettings {
     }
 
     public getBuildVariants(): object {
-        const buildVariants = this.config.get("buildVariants");
+        const buildVariants: any = this.config.get("buildVariants");
         const copy = {};
         for (const key in buildVariants) {
             if (key === EXAMPLE_VARIANT_NAME &&
@@ -84,25 +86,27 @@ export class BakeExtensionSettings {
     public getBuildVariant(name: string): object {
         const found = this.getBuildVariants()[name];
         if (!found) {
-            logger.error(`Build variant ${name} is not defined in settings`);
+            log.error(`Build variant ${name} is not defined in settings`);
         }
         return found;
     }
 
     public resolveImportsOfBuildVariant(buildVariant): BuildVariant[] {
-        logger.info(`Resolving imports of ${util.inspect(buildVariant)}`);
+        log.info(`Resolving imports of ${util.inspect(buildVariant)}`);
         if (!buildVariant.importFrom) {
-            logger.info(`No imports found, continuing with ${buildVariant.project} ${buildVariant.config} ${buildVariant.adapt}`);
+            log.info(`No imports found, continuing with ${buildVariant.project} ${buildVariant.config} ${buildVariant.adapt}`);
             return [buildVariant];
         }
 
         return buildVariant.importFrom.reduce((buildVariants, name) => {
-            logger.info(`Resolving variants of import ${name}`);
+            log.info(`Resolving variants of import ${name}`);
             const importedVariants = this.resolveImportsOfBuildVariant(this.getBuildVariant(name));
             buildVariants.push(...importedVariants);
             return buildVariants;
         }, buildVariant.project ? [buildVariant] : []);
     }
+
+    get useRTextServer(): boolean { return this.config.get("useRTextServer"); }
 }
 
 export default BakeExtensionSettings;

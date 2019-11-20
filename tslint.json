@@ -1,13 +1,12 @@
 {
     "defaultSeverity": "error",
-    "extends": [
-        "tslint:recommended"
-    ],
+    "extends": ["tslint-microsoft-contrib/recommended"],
     "jsRules": {},
+    "rulesDirectory": ["node_modules/tslint-microsoft-contrib"],
     "rules": {
         "max-line-length": {
             "options": [160]
-        }        
-    },
-    "rulesDirectory": []
+        },
+        "no-relative-imports": [false, "allow-siblings"]
+    }
 }

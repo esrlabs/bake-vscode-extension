@@ -1,5 +1,5 @@
-import * as vscode from "vscode";
 import * as minimatch from "minimatch";
+import * as vscode from "vscode";
 
 export class BakeHoverProvider implements vscode.HoverProvider {
 
@@ -15,14 +15,15 @@ export class BakeHoverProvider implements vscode.HoverProvider {
         const word = document.getText(range);
         const positionCtx = getPositionContext(document, position).join(".");
 
-        let found = this.commands.find((element, _index, _array) => {
+        const found = this.commands.find((element, _index, _array) => {
             return (element.key == word && minimatch(positionCtx, element.contextGlobPattern));
         });
 
-        if (found == undefined)
+        if (found == undefined) {
             return null;
+        }
 
-        let hoverText: string = ddrivetip(found.key, found.mandatory,
+        const hoverText: string = ddrivetip(found.key, found.mandatory,
             found.quantity, found.default, found.description);
 
         return new vscode.Hover(hoverText);
@@ -35,19 +36,21 @@ function getPositionContext(document: vscode.TextDocument, position: vscode.Posi
     const openRegex = new RegExp(/^\s*(\w*).*{\s*/);
     const closeRegex = new RegExp(/^.*}\s*/);
     let skipCounter = 0;
-    let context = [];
+    const context = [];
 
     while (line >= 0) {
         const textLine = document.lineAt(line).text;
-        if (closeRegex.test(textLine))
+        if (closeRegex.test(textLine)) {
             skipCounter++;
+        }
 
-        let result = textLine.match(openRegex);
+        const result = textLine.match(openRegex);
         if (result && result.length > 1) {
-            if (skipCounter == 0)
+            if (skipCounter == 0) {
                 context.unshift(result[1]);
-            else
+            } else {
                 skipCounter--;
+            }
         }
 
         line--;
@@ -58,13 +61,13 @@ function getPositionContext(document: vscode.TextDocument, position: vscode.Posi
 
 function ddrivetip(item: string, manda: string, quan: string, def: string, desc: string) {
     const mdTemplate =
-`[${item}](https://esrlabs.github.io/bake/syntax/project_meta_syntax.html)  
+`[${item}](https://esrlabs.github.io/bake/syntax/project_meta_syntax.html)
 
-__Mandatory:__ ${manda}  
-__Quantity:__ ${quan}  
-__Default:__ ${def}  
+__Mandatory:__ ${manda}
+__Quantity:__ ${quan}
+__Default:__ ${def}
 
-__Description:__  
+__Description:__
 ${desc}`;
 
     return mdTemplate;

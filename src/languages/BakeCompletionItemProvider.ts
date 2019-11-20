@@ -5,16 +5,13 @@ export class BakeCompletionItemProvider implements vscode.CompletionItemProvider
         document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
 
         const symbol = context.triggerCharacter;
-        if (symbol == ':') {
+        if (symbol === ":") {
             return getAttibuteValueCompletionItems(document, position);
-        }
-        else if (symbol == ',') {
+        } else if (symbol === ",") {
             return getAttributeCompletionItems(document, position);
-        }
-        else if (symbol == '\n') {
+        } else if (symbol === "\n") {
             return getCommandCompletionItems(document, position);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -36,13 +33,15 @@ function getCommandCompletionItems(document: vscode.TextDocument, position: vsco
     let skipCounter = 0;
     while (line >= 0) {
         const textLine = document.lineAt(line).text;
-        if (closeRegex.test(textLine))
+        if (closeRegex.test(textLine)) {
             skipCounter++;
+        }
 
         result = textLine.match(openRegex);
         if (result && result.length > 1) {
-            if (skipCounter == 0)
+            if (skipCounter === 0) {
                 break;
+            }
             skipCounter--;
         }
 
@@ -53,9 +52,8 @@ function getCommandCompletionItems(document: vscode.TextDocument, position: vsco
     if (!result || result.length < 2) {
         // no parent, we are in the root
         items = ["Project", "Adapt"];
-    }
-    else {
-        switch(result[1]) {
+    } else {
+        switch (result[1]) {
             case "Project":
                 items = ["Description", "RequiredBakeVersion", "Responsible",
                     "ExecutableConfig", "LibraryConfig", "CustomConfig"];
@@ -105,24 +103,23 @@ function getCommandCompletionItems(document: vscode.TextDocument, position: vsco
         }
     }
 
-    let completionItems = Array.from(items, x => {
-        return { label: x, kind: vscode.CompletionItemKind.Keyword, insertText: x }
+    return Array.from(items, (x) => {
+        return { label: x, kind: vscode.CompletionItemKind.Keyword, insertText: x };
     });
-
-    return completionItems;
 }
 
 function getAttributeCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
 
     const regex = new RegExp(/^\s*(\w*)\s*.*/);
     const textLine = document.lineAt(position).text;
-    let result = textLine.match(regex);
+    const result = textLine.match(regex);
 
-    if (!result || result.length < 2)
+    if (!result || result.length < 2) {
         return null;
+    }
 
     let items = [];
-    switch(result[1]) {
+    switch (result[1]) {
         case "Project":
             items = ["default"];
             break;
@@ -201,11 +198,9 @@ function getAttributeCompletionItems(document: vscode.TextDocument, position: vs
             break;
     }
 
-    let completionItems = Array.from(items, x => {
-        return { label: x, kind: vscode.CompletionItemKind.Keyword, insertText: " " + x }
+    return Array.from(items, (x) => {
+        return { label: x, kind: vscode.CompletionItemKind.Keyword, insertText: " " + x };
     });
-
-    return completionItems;
 }
 
 function getAttibuteValueCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
@@ -214,7 +209,7 @@ function getAttibuteValueCompletionItems(document: vscode.TextDocument, position
     const word = document.getText(range);
 
     let items = [];
-    switch(word) {
+    switch (word) {
         case "inject":
             items = ["front", "back"];
             break;
@@ -246,9 +241,7 @@ function getAttibuteValueCompletionItems(document: vscode.TextDocument, position
             break;
     }
 
-    let completionItems = Array.from(items, x => {
-        return { label: x, kind: vscode.CompletionItemKind.Keyword, insertText: " " + x }
+    return Array.from(items, (x) => {
+        return { label: x, kind: vscode.CompletionItemKind.Keyword, insertText: " " + x };
     });
-
-    return completionItems;
 }

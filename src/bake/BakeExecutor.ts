@@ -1,5 +1,38 @@
+import { promisify } from 'util'
+import { exec, execFile } from 'child_process'
 
-const exec = require("child_process").exec;
+import * as util from '../util'
+
+export interface BakeExecutable {
+    path: string;
+    isPresent: boolean;
+    isServerModeSupported?: boolean;
+    version?: util.Version;
+    minimalServerModeVersion: util.Version;
+}
+
+export async function getBakeExecutableInformation(path: string): Promise<BakeExecutable> {
+    const bake: BakeExecutable = {
+        path,
+        isPresent: false,
+        minimalServerModeVersion: util.parseVersion('2.56.0')
+    };
+    if (path.length != 0) {
+        try {
+            const { stdout } = await promisify(execFile)(path, ['--version']);
+            if (stdout) {
+                const versionRe = /-- bake ([\d\.]*), .* --/;
+                bake.version = util.parseVersion(versionRe.exec(stdout)![1]);
+
+                bake.isServerModeSupported = util.versionEquals(bake.version, bake.minimalServerModeVersion) ||
+                    util.versionGreater(bake.version, bake.minimalServerModeVersion);
+                bake.isPresent = true;
+            }
+        } catch {
+        }
+    }
+    return bake;
+}
 
 /**
  * Executes bake (must be in PATH) and captures its output
