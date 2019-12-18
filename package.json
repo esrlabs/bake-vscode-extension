@@ -17,9 +17,14 @@
   ],
   "main": "./out/extension",
   "capabilities": {
-    "completionProvider" : {
+    "documentFormattingProvider": "true",
+    "completionProvider": {
       "resolveProvider": "true",
-      "triggerCharacters": [ ":", ",", "\n" ]
+      "triggerCharacters": [
+        ":",
+        ",",
+        "\n"
+      ]
     }
   },
   "contributes": {
@@ -141,6 +146,7 @@
     "lint": "node_modules/tslint/bin/tslint -c tslint.json 'src/**/*.ts' --fix"
   },
   "devDependencies": {
+    "@types/command-exists": "^1.2.0",
     "@types/minimatch": "^3.0.3",
     "@types/mocha": "^5.2.4",
     "@types/node": "^10.5.2",
@@ -149,6 +155,7 @@
     "vscode": "^1.1.18"
   },
   "dependencies": {
+    "command-exists": "^1.2.8",
     "dot": "^1.1.2",
     "jsonfile": "^4.0.0"
   },
