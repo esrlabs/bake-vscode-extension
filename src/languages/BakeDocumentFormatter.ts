@@ -1,8 +1,9 @@
+import { sync as commandExistsSync } from "command-exists";
 import * as vscode from "vscode";
-import { sync as commandExistsSync } from "command-exists"
 
 export class BakeDocumentFormatter implements vscode.DocumentFormattingEditProvider {
-    public provideDocumentFormattingEdits(document: vscode.TextDocument, options: vscode.FormattingOptions, token: vscode.CancellationToken): vscode.ProviderResult<vscode.TextEdit[]> {
+    public provideDocumentFormattingEdits(document: vscode.TextDocument, options: vscode.FormattingOptions,
+                                          token: vscode.CancellationToken): vscode.ProviderResult<vscode.TextEdit[]> {
         const result: vscode.TextEdit[] = [];
         // Creates range from begin to the end of the document
         const range = new vscode.Range(0, 0, document.lineCount - 1,
@@ -12,10 +13,9 @@ export class BakeDocumentFormatter implements vscode.DocumentFormattingEditProvi
         const indent = options.insertSpaces ?
             " ".repeat(options.tabSize) : "\t";
 
-        if (commandExistsSync('bake-format')) {
+        if (commandExistsSync("bake-format")) {
             formatted = bakeFormatText(document.fileName, indent);
-        }
-        else {
+        } else {
             const content = document.getText(range);
             formatted = formatText(content, indent);
         }
@@ -28,20 +28,20 @@ export class BakeDocumentFormatter implements vscode.DocumentFormattingEditProvi
 }
 
 function bakeFormatText(filename: string, indent: string): string | null {
-    const { execSync } = require('child_process');
-    const command = `bake-format --indent=\"${indent}\" ${filename} -`
+    const { execSync } = require("child_process");
+    const command = `bake-format --indent=\"${indent}\" ${filename} -`;
     try {
-        return execSync(command);
+        return execSync(command).toString();
     } catch (error) {
         return null;
     }
 }
 
 function formatText(content: string, indent: string): string {
-    const lines = content.split('\n');
+    const lines = content.split("\n");
     const openRegex = new RegExp(/^\s*(\w*).*{\s*/);
     const closeRegex = new RegExp(/^.*}\s*/);
-    let beginGroup = [];
+    const beginGroup = [];
     let endGroup = -1;
 
     lines.forEach((line: string, index: number) => {
@@ -52,11 +52,11 @@ function formatText(content: string, indent: string): string {
         }
 
         if (closeRegex.test(line) && beginGroup.length > 0) {
-            endGroup = index
+            endGroup = index;
         }
 
         // Format group
-        if (endGroup != -1 && beginGroup.length > 0) {
+        if (endGroup !== -1 && beginGroup.length > 0) {
             let lastBeginGroup = beginGroup[beginGroup.length - 1] + 1;
 
             while (lastBeginGroup < endGroup) {
@@ -72,7 +72,7 @@ function formatText(content: string, indent: string): string {
     });
 
     // remove empty lines at the end of the document
-    while ((lines[lines.length - 1].length == 0) &&
+    while ((lines[lines.length - 1].length === 0) &&
            (lines.length > 1)) {
         lines.pop();
     }
