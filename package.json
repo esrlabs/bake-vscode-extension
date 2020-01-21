@@ -5,7 +5,7 @@
   "version": "0.8.3",
   "publisher": "elektronenhirn",
   "engines": {
-    "vscode": "^1.18.0"
+    "vscode": "^1.37.0"
   },
   "license": "MIT license",
   "icon": "logo_conformant_128.png",
