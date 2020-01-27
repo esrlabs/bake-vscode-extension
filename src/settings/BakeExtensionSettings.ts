@@ -1,7 +1,9 @@
 import * as util from "util";
 import * as vscode from "vscode";
-import {BuildVariant} from "../model/BuildVariant";
-import logger from "../util/logger";
+import { BuildVariant } from "../model/BuildVariant";
+import { createLogger } from "../util/logger";
+
+const log = createLogger();
 
 const EXAMPLE_VARIANT = {
     project: "Spaceship3",
@@ -12,63 +14,56 @@ const EXAMPLE_VARIANT = {
 
 const EXAMPLE_VARIANT_NAME = "ExampleVariant"; // need to ignore that one
 
+export interface ExtensionSettings {
+    useRTextServer: boolean;
+    unitTestsAdapt: string;
+    parallelBuildNum: number;
+    runUnitTestsOnBuild: boolean;
+    defaultProblemMatcher: string;
+    buildVariants: object;
+}
+
 /**
  * Provides access to all bake-extension related settings in
  *   .vscode/settings.json
  */
 export class BakeExtensionSettings {
+    private _configData: ExtensionSettings;
 
-    private config: vscode.WorkspaceConfiguration;
-    private path = require("path");
-
-    constructor() {
-        this.config = vscode.workspace.getConfiguration("bake");
+    constructor(folder?: vscode.WorkspaceFolder) {
+        this._configData = <ExtensionSettings><any>vscode.workspace.getConfiguration("bake", folder?.uri);
     }
 
-    public getNumberOfParallelBuilds() {
-        return this.config.get("parallelBuildNum");
-    }
+    get parallelBuildNum(): number { return this.configData.parallelBuildNum; }
 
-    public getUnitTestAdaptType(): string {
-        return this.config.get<string>("unitTestsAdapt");
-    }
+    get unitTestsAdapt(): string { return this.configData.unitTestsAdapt; }
 
-    public shallUnitTestRunOnBuild(): boolean {
-        return this.config.get<boolean>("runUnitTestsOnBuild");
-    }
+    get runUnitTestsOnBuild(): boolean { return this.configData.runUnitTestsOnBuild; }
 
-    public getDefaultProblemMatcher(): string {
-        return this.config.get<string>("defaultPromblemMatcher");
-    }
+    get defaultProblemMatcher(): string { return this.configData.defaultProblemMatcher; }
+
+    get buildVariants(): object { return this.configData.buildVariants; }
 
     public getDefaultBuildVariant(): string {
         const targets = this.getBuildVariants();
-        if (!targets || Object.keys(targets).length === 0) {
-            return null;
-        }
-
-        let defaultTarget;
         for (const name in targets) {
             const target = targets[name];
             if (target && target.default !== undefined &&
                 target.default === "true") {
-                    return name;
+                return name;
             }
         }
-
         return null;
     }
 
     public getBuildVariants(): object {
-        const buildVariants = this.config.get("buildVariants");
         const copy = {};
-        for (const key in buildVariants) {
+        for (const key in this.buildVariants) {
             if (key === EXAMPLE_VARIANT_NAME &&
-                JSON.stringify(buildVariants[key]) === JSON.stringify(EXAMPLE_VARIANT)) {
+                JSON.stringify(this.buildVariants[key]) === JSON.stringify(EXAMPLE_VARIANT)) {
                 continue; // ignore the example
             }
-
-            copy[key] = buildVariants[key];
+            copy[key] = this.buildVariants[key];
         }
         return copy;
     }
@@ -84,25 +79,29 @@ export class BakeExtensionSettings {
     public getBuildVariant(name: string): object {
         const found = this.getBuildVariants()[name];
         if (!found) {
-            logger.error(`Build variant ${name} is not defined in settings`);
+            log.error(`Build variant ${name} is not defined in settings`);
         }
         return found;
     }
 
     public resolveImportsOfBuildVariant(buildVariant): BuildVariant[] {
-        logger.info(`Resolving imports of ${util.inspect(buildVariant)}`);
+        log.info(`Resolving imports of ${util.inspect(buildVariant)}`);
         if (!buildVariant.importFrom) {
-            logger.info(`No imports found, continuing with ${buildVariant.project} ${buildVariant.config} ${buildVariant.adapt}`);
+            log.info(`No imports found, continuing with ${buildVariant.project} ${buildVariant.config} ${buildVariant.adapt}`);
             return [buildVariant];
         }
 
         return buildVariant.importFrom.reduce((buildVariants, name) => {
-            logger.info(`Resolving variants of import ${name}`);
+            log.info(`Resolving variants of import ${name}`);
             const importedVariants = this.resolveImportsOfBuildVariant(this.getBuildVariant(name));
             buildVariants.push(...importedVariants);
             return buildVariants;
         }, buildVariant.project ? [buildVariant] : []);
     }
+
+    get configData(): ExtensionSettings { return this._configData; }
+
+    get useRTextServer(): boolean { return this.configData.useRTextServer; }
 }
 
 export default BakeExtensionSettings;

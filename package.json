@@ -5,7 +5,7 @@
   "version": "0.8.3",
   "publisher": "elektronenhirn",
   "engines": {
-    "vscode": "^1.18.0"
+    "vscode": "^1.37.0"
   },
   "license": "MIT license",
   "icon": "logo_conformant_128.png",
@@ -45,9 +45,13 @@
       {
         "type": "bake",
         "required": [
-          "project"
+          "name", "project"
         ],
         "properties": {
+          "name": {
+            "type": "string",
+            "description": "The Bake task name"
+          },
           "project": {
             "type": "string",
             "description": "The Bake project to customize"
@@ -55,6 +59,10 @@
           "config": {
             "type": "string",
             "description": "The Bake config to customize"
+          },
+          "args": {
+            "type": "string",
+            "description": "Optional arguments that will be addionally passed to bake command"
           }
         }
       }
@@ -90,7 +98,7 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "bake configuration",
+      "title": "Bake",
       "properties": {
         "bake.parallelBuildNum": {
           "type": "integer",
@@ -107,7 +115,7 @@
           "default": true,
           "description": "Will execute the build unit tests after a successfull build."
         },
-        "bake.defaultPromblemMatcher": {
+        "bake.defaultProblemMatcher": {
           "type": "string",
           "default": "$gcc",
           "description": "Problem matcher for build output."
@@ -123,6 +131,11 @@
             }
           },
           "description": "list build variants (project/config combinations) you want to use to generate imports and defines from"
+        },
+        "bake.useRTextServer": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Bake RText service."
         }
       }
     },
@@ -139,26 +152,30 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "npm run compile && node ./node_modules/vscode/bin/test",
-    "lint": "node_modules/tslint/bin/tslint -c tslint.json 'src/**/*.ts' --fix"
+    "compile": "tsc -b",
+    "watch": "tsc -b --watch",
+    "test": "node ./out/test/runTest.js",
+    "lint": "node_modules/tslint/bin/tslint -c tslint.json -e '**/node_modules/**' 'src/**/*.ts' --fix"
   },
   "devDependencies": {
     "@types/command-exists": "^1.2.0",
+    "@types/glob": "^7.1.1",
     "@types/minimatch": "^3.0.3",
     "@types/mocha": "^5.2.4",
-    "@types/node": "^10.5.2",
-    "tslint": "5.10.0",
-    "typescript": "^2.9.2",
-    "vscode": "^1.1.18"
+    "@types/node": "^12.12.8",
+    "@types/vscode": "^1.37.0",
+    "tslint": "^5.16.0",
+    "typescript": "^3.5.1",
+    "vscode-test": "^1.0.0",
+    "tslint-microsoft-contrib": "^6.2.0"
   },
   "dependencies": {
     "command-exists": "^1.2.8",
     "dot": "^1.1.2",
+    "jsonfile": "^4.0.0",
     "minimatch": "^3.0.3",
-    "jsonfile": "^4.0.0"
+    "vscode-languageclient": "^5.2.1",
+    "server": "file:./src/server"
   },
   "repository": {
     "type": "git",

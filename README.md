@@ -9,12 +9,20 @@ Bake is a build tool for C++ projects supporting:
 - Import C/C++ Include paths and Defines into VS Code
 - Create new .h and .cpp files based on templates (from explorer's context menu)
 - Search for and execute targets from bake files (from Tasks: Run Task command)
+- Show Hovers
+- Show Code Completion Proposals
+- Document Formatting (`bake-format` tool is used)
+- Support Bake RText Service
+
+The following features are provided by the Bake Language Server if `useRTextServer` is enabled:
+- Provide Diagnostics
 
 ## Requirements
 
 - bake installation >= 2.42.1 ([bake installation instructions](https://esrlabs.github.io/bake/install/install_bake.html#how-to-install-bake))
 - Linux (Windows and Mac OS X might work too)
 - an existing `.vscode/c_cpp_properties.json` file ([how to create](https://code.visualstudio.com/docs/languages/cpp#_intellisense))
+- RText Server functionality requries bake-toolkit >= 2.56.0
 
 ## Usage
 
@@ -41,11 +49,30 @@ There are two ways on how to select a project/config combination.
 
 1) Optional: there are pre-defined combinations at your `.vscode/settings.json`. These
 combinations are called *build variants*. They may include an optional `--adapt`
-parameter, too. If a build variant is marked as `default=true` is is automatically imported during opening of the workspace. 
+parameter, too. If a build variant is marked as `default=true` is is automatically imported during opening of the workspace.
 
 2) Let VS Code search for `Project.meta` files in your workspace. Then you can select the project and the build-config afterwards.
 
 ![](build-variant-selection.png)
+
+
+#### Task definition
+
+If `config` property is not set, then the Bake project default configuration will be used. The `name` property is used only in the VS Code UI to identify your task in the Tasks list.
+
+```json
+{
+    "name": "MyTask",
+    "type": "bake",
+    "project": "project_name",
+    "config": "config_name",
+    "problemMatcher": [
+        "$gcc"
+    ],
+    "group": "build",
+    "args": "argument_list"
+}
+```
 
 #### Create new .h/.cpp files
 
@@ -97,7 +124,7 @@ This extension contributes the following settings:
             "config": "target",
         }
 ```
-
+* `bake.useRTextServer` : Enable Bake RText service. Requires bake-toolkit version 2.56.0 or greater.
 
 Deprecated (the following settings are now ignored):
 * `bake.mainProject`: override the path to the main project (bake's -m flag). Default is `Main`
@@ -109,7 +136,7 @@ None
 
 ## Debugging
 
-If anything behaves unexpected check the bake tab in the output window.
+If anything behaves unexpected check the `Bake` and `Bake Language Server` tab in the output window.
 
 ## Authors
 

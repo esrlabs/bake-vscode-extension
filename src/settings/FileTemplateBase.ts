@@ -3,7 +3,9 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
-import logger from "../util/logger";
+import { createLogger } from "../util/logger";
+
+const log = createLogger();
 
 abstract class FileTemplateBase {
 
@@ -13,7 +15,7 @@ abstract class FileTemplateBase {
         const filePath = this.getFilePath();
 
         if (!fs.existsSync(filePath)) {
-            logger.info(filePath + " not found");
+            log.info(filePath + " not found");
             this.createTemplateFile(fileName, this.doGetDefaultContent());
             return null;
         }

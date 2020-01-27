@@ -3,7 +3,31 @@
     "version": "0.1.0",
     "configurations": [
         {
-            "name": "Extension",
+            "name": "Attach to Language Server (LS) 6009",
+            "type": "node",
+            "request": "attach",
+            "address": "localhost",
+            "protocol": "inspector",
+            "port": 6009,
+            "sourceMaps": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "name": "Attach to Language Server (LS) 6010",
+            "type": "node",
+            "request": "attach",
+            "address": "localhost",
+            "protocol": "inspector",
+            "port": 6010,
+            "sourceMaps": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "name": "Launch Extension",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -11,10 +35,10 @@
             "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [ "${workspaceRoot}/out/**/*.js" ],
-            "preLaunchTask": "npm: watch"
+            "preLaunchTask": "${defaultBuildTask}"
         },
         {
-            "name": "Extension Tests",
+            "name": "Launch Extension Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -22,7 +46,13 @@
             "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [ "${workspaceRoot}/out/test/**/*.js" ],
-            "preLaunchTask": "npm: watch"
+            "preLaunchTask": "${defaultBuildTask}"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Launch Extension/Attach to LS",
+            "configurations": ["Launch Extension", "Attach to Language Server (LS) 6009"]
         }
     ]
 }

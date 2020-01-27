@@ -2,7 +2,9 @@ import * as path from "path";
 import * as vscode from "vscode";
 import BakeExecutor from "../bake/BakeExecutor";
 import BakeExtensionSettings from "../settings/BakeExtensionSettings";
-import logger from "../util/logger";
+import { createLogger } from "../util/logger";
+
+const log = createLogger();
 
 interface IncludesAndDefines {
     includes: string[];
@@ -37,20 +39,20 @@ class IncsAndDefsExecutor {
      */
     public execute(project: string, config: string, adapts: string): Promise<IncludesAndDefines> {
         const configuration = new BakeExtensionSettings();
-        const adaptCompiler = configuration.getUnitTestAdaptType();
+        const adaptCompiler = configuration.unitTestsAdapt;
         const doAdapt = adapts ? `--adapt ${adapts} ` : (config.toLowerCase().includes("unittest") && adaptCompiler) ? `--adapt ${adaptCompiler} ` : "";
         const bakeExecutor = new BakeExecutor(this.workspaceFolder);
 
-        logger.info(` Reading bake config for build variant project=${project} config=${config}`);
+        log.info(` Reading bake config for build variant project=${project} config=${config}`);
         return bakeExecutor.execute(`-m ${project} --incs-and-defs=json -a black ${doAdapt}${config}`)
             .then((output) => {
                 return this.parseOutput(output);
             }).then((output) => {
-                logger.info(` Reading bake config for build variant project=${project} config=${config} done`);
+                log.info(` Reading bake config for build variant project=${project} config=${config} done`);
                 return output;
             })
             .catch((error) => {
-                logger.error(error);
+                log.error(error);
                 throw new Error(BAKE_ERROR_MESSAGE);
             });
     }
@@ -64,11 +66,11 @@ class IncsAndDefsExecutor {
                     defines: this.collectDefinesFrom(bakeOutputAsObj),
                 });
             } catch (error) {
-                logger.error("Failed to parse bake output: " + error);
+                log.error("Failed to parse bake output: " + error);
                 if (output.length === 0) {
-                    logger.error("=> try to override the bake.config setting");
+                    log.error("=> try to override the bake.config setting");
                 } else {
-                    logger.error(output);
+                    log.error(output);
                 }
                 reject("failed to parse bake output");
             }

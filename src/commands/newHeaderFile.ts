@@ -5,31 +5,33 @@ import * as path from "path";
 import * as vscode from "vscode";
 import HeaderFileTemplate from "../settings/HeaderFileTemplate";
 import fileCreator from "../util/fileCreator";
-import logger from "../util/logger";
+import { createLogger } from "../util/logger";
+
+const log = createLogger();
 
 function newHeaderFile(context) {
     if (!context || !context.path) {
-        logger.error("no folder context given");
+        log.error("no folder context given");
         vscode.window.showErrorMessage("command needs to be invoked from context menu of file explorer");
         return;
     }
 
     const template: string = (new HeaderFileTemplate()).load();
     if (!template) {
-        logger.error("No template.h yet - try again");
+        log.error("No template.h yet - try again");
         return;
     }
 
     try {
         createNewHeaderFile(template, context.path);
     } catch (err) {
-        logger.error(err);
+        log.error(err);
     }
 }
 
 function createNewHeaderFile(template: string, folder: string) {
     folder = fs.lstatSync(folder).isFile() ? path.dirname(folder) : folder;
-    logger.info("Creating file at " + folder);
+    log.info("Creating file at " + folder);
 
     vscode.window.showInputBox({
         prompt: ".h name (without ending):",
@@ -43,7 +45,7 @@ function createNewHeaderFile(template: string, folder: string) {
             return;
         }
 
-        logger.info("creating " + fullFilename);
+        log.info("creating " + fullFilename);
         fileCreator(fullFilename, template, name);
     });
 }

@@ -17,11 +17,9 @@ export interface BuildVariant {
 
 export function createBuildVariantFrom(project: ProjectMetaFile, target: string): BuildVariant {
     const relativePath = project.getPathInWorkspace();
-    const variant: BuildVariant = {
+    return {
         project: relativePath,
         config: target,
         adapt: null,
-
     };
-    return variant;
 }

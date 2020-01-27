@@ -5,31 +5,33 @@ import * as path from "path";
 import * as vscode from "vscode";
 import CppFileTemplate from "../settings/CppFileTemplate";
 import fileCreator from "../util/fileCreator";
-import logger from "../util/logger";
+import { createLogger } from "../util/logger";
+
+const log = createLogger();
 
 function newCppFile(context) {
     if (!context || !context.path) {
-        logger.error("no folder context given");
+        log.error("no folder context given");
         vscode.window.showErrorMessage("command needs to be invoked from context menu of file explorer");
         return;
     }
 
     const template: string = (new CppFileTemplate()).load();
     if (!template) {
-        logger.error("No template.cpp yet - try again");
+        log.error("No template.cpp yet - try again");
         return;
     }
 
     try {
         createNewCppFile(template, context.path);
     } catch (err) {
-        logger.error(err);
+        log.error(err);
     }
 }
 
 function createNewCppFile(template: string, folder: string) {
     folder = fs.lstatSync(folder).isFile() ? path.dirname(folder) : folder;
-    logger.info("Creating file at " + folder);
+    log.info("Creating file at " + folder);
 
     vscode.window.showInputBox({
         prompt: ".cpp name (without ending):",
@@ -43,7 +45,7 @@ function createNewCppFile(template: string, folder: string) {
             return;
         }
 
-        logger.info("creating " + fullFilename);
+        log.info("creating " + fullFilename);
         fileCreator(fullFilename, template, name);
     });
 }

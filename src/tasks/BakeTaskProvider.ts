@@ -1,25 +1,13 @@
 import * as vscode from "vscode";
 import * as path from 'path';
 import { createBuildVariantFrom } from "../model/BuildVariant";
-import { createBakeWorkspace } from "../model/Workspace";
+import { createBakeWorkspace, BakeWorkspace } from "../model/Workspace";
 import { ProjectMetaFile } from "../model/ProjectMetaFile";
-import { createBuildTask } from "./TasksCommon";
-
-interface BakeTaskDefinition extends vscode.TaskDefinition {
-    /**
-     * The project name
-     */
-    project: string;
-
-    /**
-     * The config name containing in the project
-     */
-    config?: string;
-}
+import { createBuildTask, BakeTaskDefinition } from "./TasksCommon";
 
 export class BakeTaskProvider implements vscode.TaskProvider {
     static BakeType: string = 'bake';
-    private bakePromise: Thenable<vscode.Task[]> | undefined = undefined;
+    private bakePromise: Thenable<vscode.Task[]> | undefined;
 
     constructor(workspaceRoot: string) {
         let pattern = path.join(workspaceRoot, '{Project.meta,Adapt.meta}');
@@ -52,36 +40,33 @@ export class BakeTaskProvider implements vscode.TaskProvider {
 
                 if (!config) {
                     // config is not specified, but no default config in the project
-                    return undefined;
+                    return;
                 }
 
                 const buildVariant = createBuildVariantFrom(project, config);
-                const name = definition.config ?
-                    `'${config} in ${project.getName()}'` : `'Default (${config}) in ${project.getName()}'`;
-                let new_task = createBuildTask(name, buildVariant);
+                let new_task = createBuildTask(definition.name, buildVariant, definition.args);
                 new_task.definition = task.definition;
                 return Promise.resolve(new_task);
             });
         }
-        return undefined;
     }
 }
 
 async function getBakeTasks(): Promise<vscode.Task[]> {
-    let workspace = await createBakeWorkspace();
-
-    let buildTasks : vscode.Task[] = [];
-    for (const project of workspace.getProjectMetas()){
-        let targets = await project.getTargets();
-        for (const target of targets){
-            const buildVariant = createBuildVariantFrom(project, target);
-            const projectName = project.getName()
-            const name = (buildVariant.project === projectName)?
-                (`'${buildVariant.config}' in ${project.getName()}`) :
-                (`'${buildVariant.config}' in ${project.getName()} (${buildVariant.project})`)
-            buildTasks.push(createBuildTask(name, buildVariant));
+    return createBakeWorkspace().then(async (workspace: BakeWorkspace) => {
+        let buildTasks : vscode.Task[] = [];
+        for (const project of workspace.getProjectMetas()){
+            let targets = await project.getTargets();
+            for (const target of targets){
+                const buildVariant = createBuildVariantFrom(project, target);
+                const projectName = project.getName()
+                const name = (buildVariant.project === projectName)?
+                    (`${project.getName()}, ${buildVariant.config}`) :
+                    (`${project.getName()}, ${buildVariant.config} (${buildVariant.project})`)
+                buildTasks.push(createBuildTask(name, buildVariant));
+            }
         }
-    }
 
-    return Promise.resolve(buildTasks);
+        return buildTasks;
+    });
 }

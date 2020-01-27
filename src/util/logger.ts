@@ -1,33 +1,58 @@
-"use strict";
-
 import * as vscode from "vscode";
 
-const NAME = "bake";
+export enum LogLevel {
+    Info,
+    Warning,
+    Error,
+}
+
+export interface Stringable {
+    toString(): string;
+    toLocaleString(): string;
+}
 
 /**
  * Pipes output to the debug console (host VSCode) AND
  * to the output window (to be able to see messages in the
  * productive env).
  */
-class Logger {
+export class Logger {
 
-    public readonly channel: vscode.OutputChannel;
+    private _channel: vscode.OutputChannel;
 
-    constructor(name) {
-        this.channel = vscode.window.createOutputChannel(name);
+    constructor() {
+        this._channel = vscode.window.createOutputChannel('Bake');
     }
 
-    public info(output) {
-        this.channel.append(output + "\n");
-//        this._channel.show(true);
-        console.log(output);
+    public info(...args: Stringable[]) { this.log(LogLevel.Info, ...args); }
+    public warning(...args: Stringable[]) { this.log(LogLevel.Warning, ...args); }
+    public error(...args: Stringable[]) { this.log(LogLevel.Error, ...args); }
+
+    private log(level: LogLevel, ...args: Stringable[]) {
+        const message = args.map(a => a.toString()).join(' ');
+        switch (level) {
+        case LogLevel.Info:
+            console.info('[Bake]', message);
+            break;
+        case LogLevel.Warning:
+            console.warn('[Bake]', message);
+            break;
+        case LogLevel.Error:
+            console.error('[Bake]', message);
+            break;
+        }
+
+        this._channel.appendLine(message);
     }
 
-    public error(output) {
-        this.channel.append(output + "\n");
-        this.channel.show(true);
-        console.error(output);
+    private static _inst: Logger|null = null;
+
+    static instance(): Logger {
+        if (Logger._inst === null) {
+            Logger._inst = new Logger();
+        }
+        return Logger._inst;
     }
 }
 
-export default new Logger(NAME);
+export function createLogger() { return Logger.instance(); }

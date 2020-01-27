@@ -1,8 +1,11 @@
 import * as util from "util";
 import * as vscode from "vscode";
 import BakeExtensionSettings from "../settings/BakeExtensionSettings";
-import logger from "../util/logger";
 import { createBuildTask } from "./TasksCommon";
+import { createLogger } from "../util/logger";
+
+const log = createLogger();
+
 
 /**
  * After the user selects a Project.meta the targets from it
@@ -34,9 +37,8 @@ function createBuildTasksOfActiveBuildVariants(): vscode.Task[] {
 
     return Object.keys(buildVariantsMap).map((variantName) => {
         const v = buildVariantsMap[variantName];
-        logger.info(`Build variant to derive Tasks from:\n${util.inspect(v)}`);
+        log.info(`Build variant to derive Tasks from:\n${util.inspect(v)}`);
         const name = `${variantName} -> '${v.config}' in ${v.project}`;
         return createBuildTask(name, v);
     });
 }
-

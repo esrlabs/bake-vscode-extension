@@ -3,7 +3,9 @@
 import * as vscode from "vscode";
 import CppConfigFile from "../intellisense/CppConfigFile";
 import { globalState } from "../model/GlobalState";
-import logger from "../util/logger";
+import { createLogger } from "../util/logger";
+
+const log = createLogger();
 
 /**
  * Clean command to be called from VSCode command menu.
@@ -12,7 +14,7 @@ import logger from "../util/logger";
  */
 export async function cleanIncludesAndDefines(context: vscode.ExtensionContext) {
     try {
-        logger.info("Cleaning includes and defines");
+        log.info("Cleaning includes and defines");
 
         //
         // Check some prerequisites first
@@ -23,7 +25,7 @@ export async function cleanIncludesAndDefines(context: vscode.ExtensionContext) 
         }
 
         const workspaceFolder = globalState().getWorkspaceFolderPath();
-        logger.info("Detected workspace folder: " + workspaceFolder);
+        log.info("Detected workspace folder: " + workspaceFolder);
 
         const cppConfigFile = new CppConfigFile(workspaceFolder);
         if (!cppConfigFile.exists()) {
@@ -35,9 +37,9 @@ export async function cleanIncludesAndDefines(context: vscode.ExtensionContext) 
 
         globalState().clear();
 
-        logger.info("Cleaning includes and defines done");
+        log.info("Cleaning includes and defines done");
     } catch (error) {
-        logger.error(error);
+        log.error(error);
         vscode.window.showErrorMessage("Bake: Cleaning failed. Check output window.");
     }
 }

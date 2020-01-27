@@ -2,7 +2,9 @@
 import * as fs from "fs";
 import * as jsonfile from "jsonfile";
 import * as path from "path";
-import logger from "../util/logger";
+import { createLogger } from "../util/logger";
+
+const log = createLogger();
 
 const CPP_CONFIG_FILENAME = "c_cpp_properties.json";
 const WORKSPACE_SETTINGS_FOLDER = ".vscode";
@@ -34,7 +36,7 @@ class CppConfigFile {
                 element.includePath = element.includePath.filter((include) => !include.startsWith(WORKSPACE_INCLUDE_PREFIX));
                 element.defines = [];
             } catch (error) {
-                logger.error(error);
+                log.error(error);
             }
         });
 
@@ -61,7 +63,7 @@ class CppConfigFile {
                 element.defines = Array.from(newDefines);
 
             } catch (error) {
-                logger.error(error);
+                log.error(error);
             }
         });
 

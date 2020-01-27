@@ -4,11 +4,10 @@ import ProjectMetaFile from "./ProjectMetaFile";
 export async function createBakeWorkspace(): Promise<BakeWorkspace> {
     const uris = await vscode.workspace.findFiles("**/Project.meta");
     const projectMetas = uris.map( (uri) => new ProjectMetaFile(uri.fsPath));
-    const workspace = new BakeWorkspace(projectMetas);
-    return Promise.resolve(workspace);
+    return new BakeWorkspace(projectMetas);
 }
 
-class BakeWorkspace {
+export class BakeWorkspace {
     private projectMetaFiles: ProjectMetaFile[];
 
     constructor(projectMetaFiles: ProjectMetaFile[]) {
