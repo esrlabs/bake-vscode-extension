@@ -6,11 +6,10 @@
         "target": "es6",
         "outDir": "out",
         "strict": true,
-        "rootDir": "src",
         "sourceMap": true,
         "composite": true,
         "declaration": true
     },
-    "include": ["src"],
+    "include": ["src/**/*"],
     "exclude": ["node_modules"]
 }

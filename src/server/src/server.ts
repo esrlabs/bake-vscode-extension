@@ -1,9 +1,10 @@
 import {
-    createConnection, Diagnostic, DiagnosticSeverity, ProposedFeatures, Range, TextDocuments, TextDocumentSyncKind,
+    createConnection, Diagnostic, DiagnosticSeverity, ProposedFeatures, Range, TextDocuments, TextDocumentSyncKind, Hover
 } from "vscode-languageserver";
 
-import { RtextClient } from "./rtextClient";
-import * as rtext from "./rtextProtocol";
+import { Client as RTextClient } from "./rtext/client";
+import * as rtext from "./rtext/protocol";
+import { Context } from "./rtext/context";
 
 // Creates the LSP connection
 const connection = createConnection(ProposedFeatures.all);
@@ -14,7 +15,7 @@ const documents = new TextDocuments();
 // The workspace folder this server is operating on
 let workspaceFolder: string | null | undefined;
 
-const rtextClient = new RtextClient();
+const rtextClient = new RTextClient();
 
 let previousProblemFiles: string[] = [];
 function provideDiagnostics() {
@@ -67,6 +68,20 @@ documents.onDidOpen((event) => {
     connection.console.log(`[Server(${process.pid}) ${workspaceFolder}] Document opened: ${event.document.uri}`);
 });
 
+connection.onHover((params) => {
+    const textDocument = documents.get(params.textDocument.uri);
+    if (textDocument) {
+        let text = textDocument.getText(Range.create(0, 0, params.position.line, Number.MAX_SAFE_INTEGER));
+        let lines = text.split('\n');
+        lines.pop(); // remove last `\n` added by getText
+        let pos = params.position.character + 1; // column number start at 1 in RText protocol
+        const ctx = Context.extract(lines, pos);
+        return rtextClient.getContextInformation(ctx).then((response: rtext.ContextInformationResponse) => {
+            return { contents: response.desc };
+        });
+    }
+});
+
 connection.onInitialize((params) => {
     workspaceFolder = params.rootPath;
     connection.console.log(`[Server(${process.pid}) ${workspaceFolder}] Started and initialize received`);
@@ -74,9 +89,10 @@ connection.onInitialize((params) => {
     return {
         capabilities: {
             textDocumentSync: {
-                change: TextDocumentSyncKind.None,
+                change: TextDocumentSyncKind.Full,
                 openClose: true,
             },
+            hoverProvider: true
         },
     };
 });

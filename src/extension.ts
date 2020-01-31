@@ -79,7 +79,7 @@ export async function activate(cntxt: vscode.ExtensionContext) {
     }
 
     // The server is implemented in node
-    serverModule = cntxt.asAbsolutePath(path.join("out", "server", "src", "server.js"));
+    serverModule = cntxt.asAbsolutePath(path.join("src", "server", "out", "src", "server.js"));
 
     function didAddedWorkspaceFolder(folder: vscode.WorkspaceFolder) {
         // If we have nested workspace folders we only start a server on the outer most workspace folder.
@@ -167,7 +167,7 @@ async function newWorkspaceFolderAdded(folder: vscode.WorkspaceFolder): Promise<
             // Options to control the language client
             const clientOptions: LanguageClientOptions = {
                 // Register the server for bake project files
-                documentSelector: [{ scheme: "file", language: "bake", pattern: "${folder.uri.fsPath}/**/{Project,Adapt}.meta" }],
+                documentSelector: [{ scheme: "file", language: "bake", pattern: `${folder.uri.fsPath}/**/{Project,Adapt}.meta` }],
                 synchronize: {
                     // Notify the server about file changes to Project.meta files contained in the workspace
                     fileEvents: vscode.workspace.createFileSystemWatcher("**/{Project,Adapt}.meta"),

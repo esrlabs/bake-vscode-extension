@@ -6,26 +6,26 @@ export interface FileProblem {
     /**
      * Message
      */
-    readonly message: string;
+    message: string;
 
-    readonly severity: ProblemSeverity;
+    severity: ProblemSeverity;
 
     /**
      * Line number
      */
-    readonly line: number;
+    line: number;
 }
 
 export interface ModelProblem {
     /**
      * Fully qualifed file name
      */
-    readonly file: string;
+    file: string;
 
     /**
      * An array of the file problems
      */
-    readonly problems: FileProblem[];
+    problems: FileProblem[];
 }
 
 /**
@@ -40,12 +40,12 @@ export interface LoadModelResponse {
     /**
      * Number of total problems or -1
      */
-    readonly total_problems: number;
+    total_problems: number;
 
     /**
      * An array of the problems grouped by file
      */
-    readonly problems: ModelProblem[];
+    problems: ModelProblem[];
 }
 
 /**
@@ -53,5 +53,12 @@ export interface LoadModelResponse {
  * The backend supporting protocool version 0 only responds with an 'Unknown Command Error'.
  */
 export interface VersionResponse {
-    readonly version: number;
+    version: number;
+}
+
+/**
+ * Textual description to be shown to the user
+ */
+export interface ContextInformationResponse {
+    desc: string;
 }

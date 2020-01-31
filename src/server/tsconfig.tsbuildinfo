@@ -129,14 +129,6 @@
         "version": "0c9ea8c2028047f39a3f66752682604f543c08be8806258c3d95c93e75a43255",
         "signature": "0c9ea8c2028047f39a3f66752682604f543c08be8806258c3d95c93e75a43255"
       },
-      "./src/rtextProtocol.ts": {
-        "version": "57623a5276e6e1da07ac89fb61f242ba40d31562243bdabb92de7ccd4d0bea4b",
-        "signature": "9c279d2f5456f7ffcd69c63fe20f2550434870d494b878eb59c5c786c6a2bf81"
-      },
-      "./src/rtextClient.ts": {
-        "version": "65cf04924d580cd6d4f837c9d959a2e21a2b6aabd283c9fea26c7e7d5f0cd25a",
-        "signature": "64dd005953bbc313f646e22d3ec9c5223073b46ad504af62f94225d2e8706382"
-      },
       "../../node_modules/vscode-languageserver/lib/thenable.d.ts": {
         "version": "9e526b48daf9ed82ee32a65b7a0b02e246a97fdab86ddd6d68802dd4b1ca34e6",
         "signature": "9e526b48daf9ed82ee32a65b7a0b02e246a97fdab86ddd6d68802dd4b1ca34e6"
@@ -421,8 +413,20 @@
         "version": "e412afe13639f92925a8296a98fa39470bde3a9915014eea206c08591aafe220",
         "signature": "e412afe13639f92925a8296a98fa39470bde3a9915014eea206c08591aafe220"
       },
+      "./src/rtext/protocol.ts": {
+        "version": "4119505d8daef4c05b41bf30aee9e72f44fcde50a3e7857f2b30674c8e41f130",
+        "signature": "786ea661b8fa3838ba97f9412c7a51cd171a6cf6e55490aa0de282de05d87f39"
+      },
+      "./src/rtext/context.ts": {
+        "version": "00ff8ea544ee1bd3bdf1217273daf5bcc9bd40fb3a1687a013259727101ebb9f",
+        "signature": "e9cee44defda7418c42bf2157972c4731f1a9b309e5ad810fc35aba0a5b34aa3"
+      },
+      "./src/rtext/client.ts": {
+        "version": "e4e5d132fc54e91bb17845d290452d27fede2d24b7bf09d4686fb0d879fe2dcf",
+        "signature": "28370355726fc5dec34bd140fcbb67e8ecd8887b9370716db69c6cb0def912da"
+      },
       "./src/server.ts": {
-        "version": "2252dd25819fdeab292843ddf0a25ac4063b5d103f3773cbbbd7de8aef159b4b",
+        "version": "34e6dd38ea24d6d03de2a8f66291f7c2792c5510e334d485a0dd9851acd82f43",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../../node_modules/@types/command-exists/index.d.ts": {
@@ -457,6 +461,7 @@
       "sourceMap": true,
       "composite": true,
       "declaration": true,
+      "watch": true,
       "configFilePath": "./tsconfig.json"
     },
     "referencedMap": {
@@ -647,23 +652,6 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "../../node_modules/typescript/lib/lib.esnext.bigint.d.ts": [
-        "../../node_modules/@types/node/fs.d.ts",
-        "../../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../../node_modules/@types/node/util.d.ts",
-        "../../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./src/rtextProtocol.ts": [
-        "../../node_modules/@types/node/fs.d.ts",
-        "../../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../../node_modules/@types/node/util.d.ts",
-        "../../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./src/rtextClient.ts": [
-        "../../node_modules/@types/node/net.d.ts",
-        "../../node_modules/@types/node/child_process.d.ts",
-        "../../node_modules/@types/node/path.d.ts",
-        "../../node_modules/@types/node/timers.d.ts",
-        "./src/rtextProtocol.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
         "../../node_modules/@types/node/util.d.ts",
@@ -1246,10 +1234,35 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./src/rtext/protocol.ts": [
+        "../../node_modules/@types/node/fs.d.ts",
+        "../../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../../node_modules/@types/node/util.d.ts",
+        "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./src/rtext/context.ts": [
+        "../../node_modules/@types/node/fs.d.ts",
+        "../../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../../node_modules/@types/node/util.d.ts",
+        "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./src/rtext/client.ts": [
+        "../../node_modules/@types/node/net.d.ts",
+        "../../node_modules/@types/node/child_process.d.ts",
+        "../../node_modules/@types/node/path.d.ts",
+        "../../node_modules/@types/node/timers.d.ts",
+        "./src/rtext/protocol.ts",
+        "./src/rtext/context.ts",
+        "../../node_modules/@types/node/fs.d.ts",
+        "../../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../../node_modules/@types/node/util.d.ts",
+        "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "./src/server.ts": [
         "../../node_modules/vscode-languageserver/lib/main.d.ts",
-        "./src/rtextClient.ts",
-        "./src/rtextProtocol.ts",
+        "./src/rtext/client.ts",
+        "./src/rtext/protocol.ts",
+        "./src/rtext/context.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
         "../../node_modules/@types/node/util.d.ts",
@@ -1482,9 +1495,6 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "./src/rtextClient.ts": [
-        "./src/rtextProtocol.ts"
-      ],
       "../../node_modules/vscode-languageserver/lib/thenable.d.ts": [
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2094,6 +2104,10 @@
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./src/rtext/client.ts": [
+        "./src/rtext/context.ts",
+        "./src/rtext/protocol.ts"
       ]
     },
     "semanticDiagnosticsPerFile": [
@@ -2129,7 +2143,6 @@
       "../../node_modules/typescript/lib/lib.es2018.regexp.d.ts",
       "../../node_modules/typescript/lib/lib.esnext.intl.d.ts",
       "../../node_modules/typescript/lib/lib.esnext.bigint.d.ts",
-      "./src/rtextProtocol.ts",
       "../../node_modules/vscode-languageserver/lib/thenable.d.ts",
       "../../node_modules/@types/node/globals.d.ts",
       "../../node_modules/@types/node/assert.d.ts",
@@ -2201,13 +2214,15 @@
       "../../node_modules/vscode-languageserver/lib/workspaceFolders.d.ts",
       "../../node_modules/vscode-languageserver/lib/files.d.ts",
       "../../node_modules/vscode-languageserver/lib/main.d.ts",
-      "./src/server.ts",
       "../../node_modules/@types/command-exists/index.d.ts",
       "../../node_modules/@types/minimatch/index.d.ts",
       "../../node_modules/@types/glob/index.d.ts",
       "../../node_modules/@types/mocha/index.d.ts",
       "../../node_modules/@types/vscode/index.d.ts",
-      "./src/rtextClient.ts"
+      "./src/rtext/protocol.ts",
+      "./src/rtext/client.ts",
+      "./src/rtext/context.ts",
+      "./src/server.ts"
     ]
   },
   "version": "3.7.2"

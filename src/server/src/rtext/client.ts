@@ -3,7 +3,8 @@ import * as child_process from "child_process";
 import * as path from "path";
 import { clearInterval } from "timers";
 
-import * as rtextProtocol from "./rtextProtocol";
+import * as rtextProtocol from "./protocol";
+import { Context } from "./context";
 
 class PendingRequest {
     public invocationId: number = 0;
@@ -17,7 +18,7 @@ class RTextService {
     port?: number;
 }
 
-export class RtextClient {
+export class Client {
 
     private _client = new net.Socket();
     private _invocationCounter = 0;
@@ -43,6 +44,10 @@ export class RtextClient {
                 this.getVersion().then((response) => { console.log("Keep alive, got version " + response.version); });
             }, 60 * 1000);
         });
+    }
+
+    public getContextInformation(context: Context): Promise<rtextProtocol.ContextInformationResponse> {
+        return this.send({ command: "context_info", context: context.lines, column: context.pos });
     }
 
     public stop() {
@@ -106,7 +111,7 @@ export class RtextClient {
         console.log("Connection closed");
 
         this._reconnectTimeout = setTimeout(() => {
-            this._client.connect(9001, "127.0.0.1", () => this.onConnect());
+            this._client.connect(this._rtextService?.port!, "127.0.0.1", () => this.onConnect());
         }, 1000);
     }
 
@@ -126,18 +131,19 @@ export class RtextClient {
                 });
 
                 if (found !== -1) {
+                    const pending = this._pendingRequests[found];
                     if (obj.type === "response") {
-                        if (this._pendingRequests[found].command === "load_model") {
-                            this._pendingRequests[found].resolveFunc(<rtextProtocol.LoadModelResponse>obj);
-                        } else if (this._pendingRequests[found].command === "version") {
-                            this._pendingRequests[found].resolveFunc(<rtextProtocol.VersionResponse>obj);
+                        if (pending.command === "load_model" ||
+                            pending.command === "version" ||
+                            pending.command === "context_info") {
+                            pending.resolveFunc(obj);
                         }
                         this._pendingRequests.splice(found, 1);
                     } else if (obj.type === "progress" &&
-                        this._pendingRequests[found].progressCallback) {
-                        this._pendingRequests[found].progressCallback!(obj);
+                        pending.progressCallback) {
+                        pending.progressCallback!(obj);
                     } else if (obj.type === "unknown_command_error") {
-                        console.log("Error: unknown command " + obj.command);
+                        console.log("Error: unknown command - " + obj.command);
                         this._pendingRequests.splice(found, 1);
                     } else if (obj.type === "unsupported_version") {
                         console.log("Error: unsupported version " + obj.version);
