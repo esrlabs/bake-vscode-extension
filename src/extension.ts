@@ -172,6 +172,9 @@ async function newWorkspaceFolderAdded(folder: vscode.WorkspaceFolder): Promise<
                     // Notify the server about file changes to Project.meta files contained in the workspace
                     fileEvents: vscode.workspace.createFileSystemWatcher("**/{Project,Adapt}.meta"),
                 },
+                initializationOptions: {
+                    hoverProvider: false // Bake RText service does not support `context_info`
+                },
                 workspaceFolder: folder
             };
 

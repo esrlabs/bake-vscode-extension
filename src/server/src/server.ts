@@ -92,7 +92,7 @@ connection.onInitialize((params) => {
                 change: TextDocumentSyncKind.Full,
                 openClose: true,
             },
-            hoverProvider: true
+            hoverProvider: params.initializationOptions.hoverProvider
         },
     };
 });
