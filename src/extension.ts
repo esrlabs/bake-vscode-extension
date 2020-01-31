@@ -173,6 +173,8 @@ async function newWorkspaceFolderAdded(folder: vscode.WorkspaceFolder): Promise<
                     fileEvents: vscode.workspace.createFileSystemWatcher("**/{Project,Adapt}.meta"),
                 },
                 initializationOptions: {
+                    command: 'bake-rtext-service',
+                    args: [path.join(folder.uri.fsPath, '**')],
                     hoverProvider: false // Bake RText service does not support `context_info`
                 },
                 workspaceFolder: folder

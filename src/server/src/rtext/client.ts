@@ -14,7 +14,9 @@ class PendingRequest {
     public resolveFunc: Function = () => { };
 }
 
-class RTextService {
+interface RTextService {
+    command: string;
+    args?: string[];
     process?: child_process.ChildProcess;
     port?: number;
 }
@@ -29,8 +31,8 @@ export class Client {
     private _keepAliveTask?: NodeJS.Timeout;
     private _rtextService?: RTextService;
 
-    public async start(fsPath: string): Promise<any> {
-        return this.runBakeRTextService([path.join(fsPath, '**')]).then(service => {
+    public async start(command: string, args?: string[]): Promise<any> {
+        return this.runRTextService(command, args).then(service => {
             this._rtextService = service;
             service.process!.on('close', () => {
                 this._rtextService = undefined;
@@ -159,19 +161,24 @@ export class Client {
         }
     }
 
-    private async runBakeRTextService(patterns: [string]): Promise<RTextService> {
+    private async runRTextService(command: string, args?: string[]): Promise<RTextService> {
+        let rtextService: RTextService = {
+            command: command,
+            args: args
+        };
         return new Promise<RTextService>((resolve, reject) => {
-            const command = `bake-rtext-service ${patterns.join(" ")}`;
-            console.log(`Run ${command}`);
-            let service = child_process.spawn(`bake-rtext-service`, patterns, { shell: process.platform === 'win32' });
+            console.log(`Run ${command} ${args?.join(" ")}`);
+            let proc = child_process.spawn(command, args, { shell: process.platform === 'win32' });
 
-            if (service != null) {
-                service.stdout.on('data', (data: any) => {
+            if (proc != null) {
+                proc.stdout.on('data', (data: any) => {
                     const stdout: string = data.toString();
                     console.log(stdout);
                     const foundPort = stdout.match(/.*listening on port (\d*)/);
                     if (foundPort) {
-                        resolve({ process: service, port: parseInt(foundPort[1]) });
+                        rtextService.port = parseInt(foundPort[1]);
+                        rtextService.process = proc;
+                        resolve(rtextService);
                     }
                 });
             } else {

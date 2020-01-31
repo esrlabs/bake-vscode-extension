@@ -18,6 +18,7 @@ import {
 import { Client as RTextClient } from "./rtext/client";
 import * as rtext from "./rtext/protocol";
 import { Context } from "./rtext/context";
+import { ServerInitializationOptions } from "./options";
 
 // Creates the LSP connection
 const connection = createConnection(ProposedFeatures.all);
@@ -27,6 +28,9 @@ const documents = new TextDocuments();
 
 // The workspace folder this server is operating on
 let workspaceFolder: string | null | undefined;
+
+// Initialization options passed by the client
+let settings: ServerInitializationOptions;
 
 const rtextClient = new RTextClient();
 
@@ -151,16 +155,19 @@ connection.onInitialize((params) => {
     workspaceFolder = params.rootPath;
     connection.console.log(`[Server(${process.pid}) ${workspaceFolder}] Started and initialize received`);
 
+    settings = params.initializationOptions;
+
     return {
         capabilities: {
             textDocumentSync: {
                 change: TextDocumentSyncKind.Full,
                 openClose: true,
             },
-            completionProvider: {
-                resolveProvider: false // @todo not tested properly
-            },
-            hoverProvider: params.initializationOptions.hoverProvider
+            // @todo not tested properly
+            // completionProvider: {
+            //     resolveProvider: false
+            // },
+            hoverProvider: settings.hoverProvider
         },
     };
 });
@@ -168,7 +175,7 @@ connection.onInitialize((params) => {
 connection.onInitialized(async () => {
     connection.console.log(`[Server(${process.pid}) ${workspaceFolder}] Initialized received`);
     if (workspaceFolder) {
-        await rtextClient.start(workspaceFolder);
+        await rtextClient.start(settings.command, settings.args);
         setTimeout(() => provideDiagnostics(), 0);
     }
 });
