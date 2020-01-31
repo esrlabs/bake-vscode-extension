@@ -5,6 +5,7 @@ import { clearInterval } from "timers";
 
 import * as rtextProtocol from "./protocol";
 import { Context } from "./context";
+import { Message } from "./message";
 
 class PendingRequest {
     public invocationId: number = 0;
@@ -50,6 +51,10 @@ export class Client {
         return this.send({ command: "context_info", context: context.lines, column: context.pos });
     }
 
+    public getContentCompletion(context: Context): Promise<rtextProtocol.ContentCompleteResponse> {
+        return this.send({ command: "content_complete", context: context.lines, column: context.pos });
+    }
+
     public stop() {
         if (this._reconnectTimeout)
             clearTimeout(this._reconnectTimeout);
@@ -85,8 +90,7 @@ export class Client {
         request.command = data.command;
         this._pendingRequests.push(request);
 
-        const json = JSON.stringify(data);
-        const payload = json.length + json;
+        const payload = Message.serialize(data);
 
         this._client.write(payload);
         this._invocationCounter++;
@@ -135,7 +139,8 @@ export class Client {
                     if (obj.type === "response") {
                         if (pending.command === "load_model" ||
                             pending.command === "version" ||
-                            pending.command === "context_info") {
+                            pending.command === "context_info" ||
+                            pending.command === "content_complete") {
                             pending.resolveFunc(obj);
                         }
                         this._pendingRequests.splice(found, 1);

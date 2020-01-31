@@ -1,5 +1,18 @@
 import {
-    createConnection, Diagnostic, DiagnosticSeverity, ProposedFeatures, Range, TextDocuments, TextDocumentSyncKind, Hover
+    createConnection,
+    Diagnostic,
+    DiagnosticSeverity,
+    ProposedFeatures,
+    Range,
+    TextDocuments,
+    TextDocumentSyncKind,
+    TextDocument,
+    Hover,
+    TextDocumentPositionParams,
+    InsertTextFormat,
+    CompletionParams,
+    CompletionItem,
+    CompletionItemKind,
 } from "vscode-languageserver";
 
 import { Client as RTextClient } from "./rtext/client";
@@ -64,20 +77,72 @@ function provideDiagnostics() {
     });
 }
 
+function extractContext(document: TextDocument, position: any): Context {
+    let text = document.getText(Range.create(0, 0, position.line, Number.MAX_SAFE_INTEGER));
+    let lines = text.split('\n');
+    lines.pop(); // remove last `\n` added by getText
+    let pos = position.character + 1; // column number start at 1 in RText protocol
+    return Context.extract(lines, pos);
+}
+
 documents.onDidOpen((event) => {
     connection.console.log(`[Server(${process.pid}) ${workspaceFolder}] Document opened: ${event.document.uri}`);
 });
 
-connection.onHover((params) => {
-    const textDocument = documents.get(params.textDocument.uri);
-    if (textDocument) {
-        let text = textDocument.getText(Range.create(0, 0, params.position.line, Number.MAX_SAFE_INTEGER));
-        let lines = text.split('\n');
-        lines.pop(); // remove last `\n` added by getText
-        let pos = params.position.character + 1; // column number start at 1 in RText protocol
-        const ctx = Context.extract(lines, pos);
+connection.onHover((params: TextDocumentPositionParams) => {
+    const document = documents.get(params.textDocument.uri);
+    if (document) {
+        const ctx = extractContext(document, params.position);
         return rtextClient.getContextInformation(ctx).then((response: rtext.ContextInformationResponse) => {
             return { contents: response.desc };
+        });
+    }
+});
+
+connection.onCompletion((params: CompletionParams): Promise<CompletionItem[]> | undefined => {
+    function createSnippetString(insert: string): string {
+        let begin = 0;
+        let snippet: string = "";
+        while (begin != -1) {
+            let pos = begin;
+            begin = insert.indexOf('|', begin);
+            if (pos != begin) {
+                const text = insert.substring(pos, begin === -1 ? insert.length : begin);
+                snippet = snippet.concat(text);
+            }
+            if (begin != -1) {
+                let end = insert.indexOf('|', begin);
+                let number = parseInt(insert.substring(begin, end));
+
+                begin = end;
+                end = insert.indexOf('|', begin);
+                let name = insert.substring(begin, end);
+
+                begin = end;
+                end = insert.indexOf('|', begin);
+                let description = insert.substring(begin, end);
+
+                begin = end;
+                snippet = snippet.concat(`\$\{${number}:${name}\}`);
+            }
+        }
+        return snippet;
+    }
+    const document = documents.get(params.textDocument.uri);
+    if (document) {
+        const ctx = extractContext(document, params.position);
+        return rtextClient.getContentCompletion(ctx).then((response: rtext.ContentCompleteResponse) => {
+            const items: CompletionItem[] = [];
+            response.options.forEach((option) => {
+                items.push({
+                    insertText: createSnippetString(option.insert),
+                    insertTextFormat: InsertTextFormat.Snippet,
+                    label: option.display,
+                    detail: option.desc,
+                    kind: CompletionItemKind.Snippet
+                });
+            });
+            return items;
         });
     }
 });
@@ -91,6 +156,9 @@ connection.onInitialize((params) => {
             textDocumentSync: {
                 change: TextDocumentSyncKind.Full,
                 openClose: true,
+            },
+            completionProvider: {
+                resolveProvider: false // @todo not tested properly
             },
             hoverProvider: params.initializationOptions.hoverProvider
         },

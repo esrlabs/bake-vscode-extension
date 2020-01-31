@@ -62,3 +62,38 @@ export interface VersionResponse {
 export interface ContextInformationResponse {
     desc: string;
 }
+
+export interface CompletionOption {
+    /**
+     * Text to display.
+     * Contains the string which should be displayed to the user in some kind of
+     * completion option menu. An optional description field may provide more information about a
+     * particular option.
+     */
+    display: string;
+
+    /**
+     * Text to be inserted.
+     * Holds the text to be inserted if the completion option is chosen. This text
+     * may contains placeholders for cursor position. An editor may use them to assist a user in
+     * filling additional completion fields.
+     * Each placeholder must start and end with a vertical bar character (``|``) and can contain up to
+     * three optional parts separated by an additional vertical bar character: ordering number, name and
+     * description of this cursor position. E.g.: ``||``, ``|1|name|Entity name|``, ``|||New value|``.
+     * Placeholders with the same name must be considered as the same value repeated in different
+     * positions.
+     */
+    insert: string;
+
+    /**
+     * Optional description.
+     */
+    desc: string;
+}
+
+/**
+ * If there are no completion options, the backend may send an empty response.
+ */
+export interface ContentCompleteResponse {
+    options: CompletionOption[];
+}
