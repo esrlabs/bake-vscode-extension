@@ -58,6 +58,7 @@ class IncsAndDefsExecutor {
     }
 
     private parseOutput(output: string): Promise<IncludesAndDefines> {
+        output = output.substring(output.search("{"), output.length);
         return new Promise((resolve, reject) => {
             try {
                 const bakeOutputAsObj = JSON.parse(output);
