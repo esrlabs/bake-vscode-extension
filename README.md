@@ -37,7 +37,7 @@ From the command palette `Ctrl+Shift+P`:
 - Import C++ Includes and Defines from Bake
 - Clean imported C++ Includes and Defines from Bake
 
-![](commands.png)
+![](images/commands.png)
 
 #### Import C++ Includes and Defines from Bake
 
@@ -53,7 +53,7 @@ parameter, too. If a build variant is marked as `default=true` is is automatical
 
 2) Let VS Code search for `Project.meta` files in your workspace. Then you can select the project and the build-config afterwards.
 
-![](build-variant-selection.png)
+![](images/build-variant-selection.png)
 
 
 #### Task definition
